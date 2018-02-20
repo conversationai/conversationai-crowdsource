@@ -42,6 +42,7 @@ export class AppComponent implements OnInit {
   errorMessage: string|null;
 
   customClientJobKey: string = '';
+  notEmbedded: boolean = true;
 
   selectedWork: WorkToDo;
   questionId: string;
@@ -160,8 +161,16 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Extract job key from hash
     const parts = document.location.hash.substr(1).split('/');
     this.customClientJobKey = parts[0];
+
+    // Determine if page should render in embedded mode
+    var query = document.location.search.substr(1)
+    var embedded_query = /embedded=(true|false)/g.exec(query);
+    if (embedded_query) {
+      this.notEmbedded = embedded_query[1] == 'true' ? false : true;
+    }
 
     this.userNonce = localStorage.getItem('user_nonce');
     const maybe_local_sent_count = localStorage.getItem('local_sent_count');
@@ -205,11 +214,11 @@ export class AppComponent implements OnInit {
     // If we have a parent window, send message to it with the answer. This
     // allows the crowdsourcing interface to be embedded in an iFrame and
     // communicate with the parent window.
-    if (window.parent != window.top) {
+    if (window.self != window.top) {
       console.log('sending message with the answer to parent window');
       window.parent.postMessage(JSON.stringify(answer), '*');
     } else {
-      console.log('NOT sending message with the answer to parent window');
+      console.log('not sending message because no parent window');
     }
 
     this.http
