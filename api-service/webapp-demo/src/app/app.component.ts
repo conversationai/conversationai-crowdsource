@@ -190,20 +190,32 @@ export class AppComponent implements OnInit {
       answerPath += '/' + this.customClientJobKey;
     }
 
+    const answer = {
+      questionId: this.questionId,
+      userNonce: this.userNonce,
+      readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
+      toxic: this.toxicityAnswer,
+      nobscene: this.obsceneAnswer,
+      insult: this.insultAnswer,
+      threat: this.threatAnswer,
+      identityHate: this.hateAnswer,
+      comments: this.comments
+    };
+
+    // If we have a parent window, send message to it with the answer. This
+    // allows the crowdsourcing interface to be embedded in an iFrame and
+    // communicate with the parent window.
+    if (window.parent != window.top) {
+      console.log('sending message with the answer to parent window');
+      window.parent.postMessage(JSON.stringify(answer), '*');
+    } else {
+      console.log('NOT sending message with the answer to parent window');
+    }
+
     this.http
-        .post(answerPath, {
-          questionId: this.questionId,
-          userNonce: this.userNonce,
-          readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
-          toxic: this.toxicityAnswer,
-          obscene: this.obsceneAnswer,
-          insult: this.insultAnswer,
-          threat: this.threatAnswer,
-          identityHate: this.hateAnswer,
-          comments: this.comments
-        })
-        .subscribe(
-            (data: {}) => {
+      .post(answerPath, answer)
+      .subscribe(
+        (data: {}) => {
               console.log(
                   `sent score; got response:` + JSON.stringify(data, null, 2));
               this.local_sent_count += 1;
