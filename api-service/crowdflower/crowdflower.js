@@ -1,7 +1,7 @@
 <iframe
-  src="https://crowdsource-demo-dot-wikidetox.appspot.com/?embedded=true#{{job_client_id}}/{{question_id}}"
+  src="https://crowdsource-demo-dot-wikidetox.appspot.com/?embedded=true#{{client_job_key}}/{{question_id}}"
   width="400"
-  height="600"
+  height="425"
   frameborder="0"
   scrolling="no"
   marginheight="0"
