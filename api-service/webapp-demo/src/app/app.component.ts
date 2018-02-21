@@ -81,6 +81,7 @@ export class AppComponent implements OnInit {
   chooseRandomWorkToDo(data: WorkToDo[]): void {
     this.selectedWork = data[getRandomInt(0, data.length - 1)];
     console.log('Work to do: ', this.selectedWork);
+
     this.questionId = this.selectedWork.question_id;
     this.setDocumentHash();
     this.question = this.selectedWork.question;

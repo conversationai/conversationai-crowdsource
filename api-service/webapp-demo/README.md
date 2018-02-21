@@ -8,6 +8,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 Run `ng serve:dev` for a dev server backed by a localhost proxy to port 8080 for the API server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+By default, the app will load a random question from the specified job.You can request a particular question in the hash, `http://localhost:4200/#{clientJobKey}/{questionId}`.
+
 ## Code scaffolding
 
 Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
