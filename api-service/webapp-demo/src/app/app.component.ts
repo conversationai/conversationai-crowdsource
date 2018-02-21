@@ -162,7 +162,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Extract job key from hash
+    // Extract ClientJobKey from hash if specified
     const parts = document.location.hash.substr(1).split('/');
     this.customClientJobKey = parts[0];
 
@@ -170,7 +170,7 @@ export class AppComponent implements OnInit {
     var query = document.location.search.substr(1)
     var embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
-      this.notEmbedded = embedded_query[1] == 'true' ? false : true;
+      this.notEmbedded = (embedded_query[1] == 'true') ? false : true;
     }
 
     this.userNonce = localStorage.getItem('user_nonce');
