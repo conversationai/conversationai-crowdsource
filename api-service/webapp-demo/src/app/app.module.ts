@@ -2,6 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
+import { RouterModule, Routes } from '@angular/router';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -39,6 +40,27 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
+import { TestJobComponent } from './test_job.component';
+
+const appRoutes: Routes = [
+  {
+    path: 'test_job',
+    component: TestJobComponent
+  },
+  {
+    path: 'test_job/:jobId',
+    component: TestJobComponent
+  },
+  {
+    path: 'test_job/:jobId/:questionId',
+    component: TestJobComponent
+  },
+  {
+    path: '',
+    redirectTo: '/test_job',
+    pathMatch: 'full'
+  },
+];
 
 
 @NgModule({
@@ -80,9 +102,11 @@ import { AppComponent } from './app.component';
     MatToolbarModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    RouterModule.forRoot(appRoutes, {useHash: true})
   ],
   declarations: [
     AppComponent,
+    TestJobComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
