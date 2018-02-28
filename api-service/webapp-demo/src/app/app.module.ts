@@ -41,6 +41,7 @@ import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { TestJobComponent } from './test_job.component';
+import { CrowdSourceApiService} from './crowd_source_api.service';
 
 const appRoutes: Routes = [
   {
@@ -108,7 +109,7 @@ const appRoutes: Routes = [
     AppComponent,
     TestJobComponent
   ],
-  providers: [],
+  providers: [CrowdSourceApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

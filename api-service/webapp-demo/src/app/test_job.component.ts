@@ -1,7 +1,24 @@
-import {HttpClient} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Params, Router} from '@angular/router';
+import {
+  CommentQuestion,
+  CrowdSourceApiService,
+  CrowdSourceAnswer,
+  JobQualitySummary,
+  WorkToDo,
+  WorkerQualitySummary
+} from './crowd_source_api.service';
 // import * as wpconvlib from '@conversationai/wpconvlib';
+
+interface TestJobCrowdSourceAnswer extends CrowdSourceAnswer {
+  readableAndInEnglish: string;
+  toxic: string,
+  obscene: string,
+  insult: string;
+  threat: string;
+  identityHate: string;
+  comments: string;
+}
 
 // The maximum is exclusive and the minimum is inclusive
 function getRandomInt(min: number, max: number): number {
@@ -9,29 +26,6 @@ function getRandomInt(min: number, max: number): number {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-interface WorkToDo {
-  question_id: string;
-  question: CommentQuestion;
-  answers_per_question: number;
-  answer_count: number;
-}
-
-interface CommentQuestion {
-  id: string;
-  text: string;
-}
-
-interface WorkerQualitySummary {
-  answer_count: number;
-  mean_score: number;
-}
-
-interface JobQualitySummary {
-  toanswer_count: number;
-  toanswer_mean_score: number;
-}
-
 
 @Component({
   selector: 'test-job',
@@ -68,8 +62,8 @@ export class TestJobComponent implements OnInit {
   // requests from the browser's prespective.
   local_sent_count: number = 0;
 
-  constructor(private http: HttpClient, private router: Router,
-              private route: ActivatedRoute) {}
+  constructor(private router: Router, private route: ActivatedRoute,
+              private crowdSourceApiService: CrowdSourceApiService) {}
 
   chooseRandomWorkToDo(data: WorkToDo[]): void {
     this.selectedWork = data[getRandomInt(0, data.length - 1)];
@@ -100,27 +94,17 @@ export class TestJobComponent implements OnInit {
     // Make the HTTP request:
     if (this.customClientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
-      this.http.get('/api/work/' + this.customClientJobKey + '/' + this.questionId)
-          .subscribe(
+      this.crowdSourceApiService.getWorkToDoForQuestion(
+        this.customClientJobKey, this.questionId)
+        .subscribe(
               (workToDo: WorkToDo) => {
                 this.chooseRandomWorkToDo([workToDo]);
               },
               (e) => {
                 this.errorMessage = e.message;
               });
-    } else if (this.customClientJobKey) {
-      // If specified job, get next questions for that job.
-      this.http.get('/api/work/' + this.customClientJobKey)
-          .subscribe(
-              (data: WorkToDo[]) => {
-                this.chooseRandomWorkToDo(data);
-              },
-              (e) => {
-                this.errorMessage = e.message;
-              });
     } else {
-      // Otherwise get questions for this job.
-      this.http.get('/api/work')
+      this.crowdSourceApiService.getWorkToDo(this.customClientJobKey)
           .subscribe(
               (data: WorkToDo[]) => {
                 this.chooseRandomWorkToDo(data);
@@ -132,7 +116,7 @@ export class TestJobComponent implements OnInit {
 
     // CONSIDER: support custom job keys.
     // Make the HTTP request:
-    this.http.get('/api/job_quality')
+    this.crowdSourceApiService.getJobQuality()
         .subscribe(
             (data: JobQualitySummary) => {
               this.overall_job_answer_count = data.toanswer_count;
@@ -142,7 +126,10 @@ export class TestJobComponent implements OnInit {
               this.errorMessage = e.message;
             });
     // Make the HTTP request:
-    this.http.get('/api/quality/' + this.userNonce)
+    if (!this.userNonce) {
+      throw new Error('No worker id available');
+    }
+    this.crowdSourceApiService.getWorkerQuality(this.userNonce)
         .subscribe(
             (data: WorkerQualitySummary) => {
               console.log(data);
@@ -186,13 +173,8 @@ export class TestJobComponent implements OnInit {
   public sendScoreToApi() {
     console.log('test click');
 
-    let answerPath = '/api/answer';
-    if (this.customClientJobKey) {
-      answerPath += '/' + this.customClientJobKey;
-    }
-
-    this.http
-        .post(answerPath, {
+    this.crowdSourceApiService.postAnswer(
+         {
           questionId: this.questionId,
           userNonce: this.userNonce,
           readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
@@ -202,7 +184,8 @@ export class TestJobComponent implements OnInit {
           threat: this.threatAnswer,
           identityHate: this.hateAnswer,
           comments: this.comments
-        })
+        } as TestJobCrowdSourceAnswer,
+        this.customClientJobKey)
         .subscribe(
             (data: {}) => {
               console.log(
