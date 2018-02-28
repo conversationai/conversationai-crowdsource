@@ -91,7 +91,6 @@ export class TestJobComponent implements OnInit {
     this.question = null;
     this.questionId = '';
 
-    // Make the HTTP request:
     if (this.customClientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
       this.crowdSourceApiService.getWorkToDoForQuestion(
@@ -114,8 +113,6 @@ export class TestJobComponent implements OnInit {
               });
     }
 
-    // CONSIDER: support custom job keys.
-    // Make the HTTP request:
     this.crowdSourceApiService.getJobQuality()
         .subscribe(
             (data: JobQualitySummary) => {
@@ -125,10 +122,11 @@ export class TestJobComponent implements OnInit {
             (e) => {
               this.errorMessage = e.message;
             });
-    // Make the HTTP request:
+
     if (!this.userNonce) {
       throw new Error('No worker id available');
     }
+
     this.crowdSourceApiService.getWorkerQuality(this.userNonce)
         .subscribe(
             (data: WorkerQualitySummary) => {
