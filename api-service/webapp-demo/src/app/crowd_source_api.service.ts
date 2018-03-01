@@ -16,6 +16,10 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
 import 'rxjs/add/operator/map';
 
+// Because these structures come from the DB, they currently have underscore
+// word separaters instead of useing CamelCase.
+// TODO: make the DB, and field names, and any uses in the server, also be
+// CamelCase so that we can use a more consistent code style.
 export interface WorkToDo {
   question_id: string;
   question: CommentQuestion;
