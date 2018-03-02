@@ -23,28 +23,47 @@ Then from this directory, use yarn to install the local package dependencies:
 yarn install
 ```
 
-Link in the Wikipedia conversations library (to treat it as a node package):
+Setup the initial `build` directory.
 
-```shell
-cd node_modules
-ln -s ../../wpconvlib ./
-cd ..
+```
+yarn run setup
 ```
 
-### Setup the config file
+### Setup the config file and static webapp
 
 Before you can deploy, you need to:
 
-1. Copy the `server_config.template.json` file to `build/config/server_config.json`.
-2. In the `build/config/server_config.json` file, set these values:
+1.  Copy the `server_config.template.json` file to `build/config/server_config.json`.
+2.  In the `build/config/server_config.json` file, set these values:
 
     * `cloudProjectId` This is the name of your google cloud project.
     * `clientJobKey` This is a client job key to access the api-server.
     * `apiUrl` This should be the URL of the api-server.
 
+3.  Copy the static files you want to be served into `build/static` (The
+    `server_config.json` variable named `staticDir` has a default value set to
+    be `build/static`). For example, once the
+    [webapp-demo](../webapp-demo/README.md) is built, you can do:
+
+    ```bash
+    rsync -a ../webapp-demo/dist/* ./build/static/
+    ```
+
+## Running a server to do local testing and development with
+
+To start a local dev server:
+
+```
+yarn run start:watch
+```
+
+This will also watch all the files, rebuilding and restarting the server
+when anything changes.
+
 ### Deployment to Google Cloud Project
 
-This project uses appengine flexible environment for deployment, which is configured in the `app.yml` file.
+This project uses appengine flexible environment for deployment, which is
+configured in the `app.yml` file.
 
 To deploy, make sure your cloud project is set appropriately, and run;
 
@@ -59,16 +78,6 @@ export SERVER=...
 curl -H "Content-Type: application/json" -X GET ${SERVER}/work
 ```
 
-## Development
-
-To start a local dev server:
-
-```
-yarn run start:watch
-```
-
-This will also watch all the files, rebuilding and restarting the server when anything
-changes.
 
 ## About this code
 
