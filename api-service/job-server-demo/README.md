@@ -46,12 +46,24 @@ Before you can deploy, you need to:
     [webapp-demo](../webapp-demo/README.md) is built, you can do:
 
     ```bash
-    rsync cp ../wedapp-demo/dist/* ./build/static/
+    rsync -a ../webapp-demo/dist/* ./build/static/
     ```
+
+## Running a server to do local testing and development with
+
+To start a local dev server:
+
+```
+yarn run start:watch
+```
+
+This will also watch all the files, rebuilding and restarting the server
+when anything changes.
 
 ### Deployment to Google Cloud Project
 
-This project uses appengine flexible environment for deployment, which is configured in the `app.yml` file.
+This project uses appengine flexible environment for deployment, which is
+configured in the `app.yml` file.
 
 To deploy, make sure your cloud project is set appropriately, and run;
 
@@ -66,16 +78,6 @@ export SERVER=...
 curl -H "Content-Type: application/json" -X GET ${SERVER}/work
 ```
 
-## Development
-
-To start a local dev server:
-
-```
-yarn run start:watch
-```
-
-This will also watch all the files, rebuilding and restarting the server when anything
-changes.
 
 ## About this code
 
