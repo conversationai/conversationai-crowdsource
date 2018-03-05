@@ -31,6 +31,9 @@ interface JobQualitySummary {
   toanswer_mean_score: number;
 }
 
+// Constants for data collection
+const YES = 'Yes';
+const NO = 'No';
 
 @Component({
   selector: 'app-root',
@@ -200,12 +203,10 @@ export class AppComponent implements OnInit {
       answerPath += '/' + this.customClientJobKey;
     }
 
-    const yesEnglish = 'Yes';
-    const noEnglish = 'No';
     const answer = {
       questionId: this.questionId,
       userNonce: this.userNonce,
-      readableAndInEnglish: this.readableAndInEnglish ? yesEnglish: noEnglish,
+      readableAndInEnglish: this.readableAndInEnglish ? YES: NO,
       toxic: this.toxicityAnswer,
       obscene: this.obsceneAnswer,
       insult: this.insultAnswer,
