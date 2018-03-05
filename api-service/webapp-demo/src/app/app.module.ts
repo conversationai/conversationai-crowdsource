@@ -42,6 +42,8 @@ import {HttpClientModule} from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { TestJobComponent } from './test_job.component';
 
+// TODO(rachelrosen): Make some or all of these optional parameters instead of
+// route parameters.
 const appRoutes: Routes = [
   {
     path: 'test_job',
