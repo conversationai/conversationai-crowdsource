@@ -46,16 +46,14 @@ import { CrowdSourceApiService} from './crowd_source_api.service';
 // TODO(rachelrosen): Make some or all of these optional parameters instead of
 // route parameters.
 const appRoutes: Routes = [
+  // TODO(rachelrosen): Delete the path without the custom job key, since that
+  // should be required for all jobs.
   {
     path: 'test_job',
     component: TestJobComponent
   },
   {
-    path: 'test_job/:jobId',
-    component: TestJobComponent
-  },
-  {
-    path: 'test_job/:jobId/:questionId',
+    path: 'test_job/:customClientJobKey',
     component: TestJobComponent
   },
   {

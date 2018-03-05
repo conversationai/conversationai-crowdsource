@@ -57,7 +57,7 @@ export class CrowdSourceApiService {
     return this.http.get('/api/work/' + customClientJobKey + '/' + questionId);
   }
 
-  getWorkToDo(customClientJobKey?: string): Observable<WorkToDo[]> {
+  getWorkToDo(customClientJobKey: string|null): Observable<WorkToDo[]> {
     if (customClientJobKey) {
       // If specified job, get next questions for that job.
       return this.http.get('/api/work/' + customClientJobKey);
@@ -76,7 +76,7 @@ export class CrowdSourceApiService {
     return this.http.get('/api/quality/' + userNonce);
   }
 
-  postAnswer(crowdSourceAnswer: CrowdSourceAnswer, customClientJobKey?: string):
+  postAnswer(crowdSourceAnswer: CrowdSourceAnswer, customClientJobKey: string|null):
       Observable<{}> {
     let answerPath = '/api/answer';
     if (customClientJobKey) {
