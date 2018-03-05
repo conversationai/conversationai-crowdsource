@@ -5,7 +5,7 @@
   "version": "0.0.1",
   "license": "Apache-2.0",
   "scripts": {
-    "setup": "mkdir -p build/server/ && mkdir -p build/config/ && rsync --ignore-existing server_config.template.json build/config/server_config.json",
+    "setup": "mkdir -p build/server/ && mkdir -p build/static/ && mkdir -p build/config/ && rsync --ignore-existing server_config.template.json build/config/server_config.json",
     "build": "tsc --outdir build/server/",
     "build:watch": "tsc --outdir build/server/ --watch",
     "start": "node build/server/run_server.js build/config/server_config.json",

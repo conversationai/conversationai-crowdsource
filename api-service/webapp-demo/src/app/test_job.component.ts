@@ -27,6 +27,10 @@ function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
+// Constants for data collection
+const YES = 'Yes';
+const NO = 'No';
+
 @Component({
   selector: 'test-job',
   templateUrl: './test_job.component.html',
@@ -37,6 +41,7 @@ export class TestJobComponent implements OnInit {
   errorMessage: string|null;
 
   customClientJobKey?: string;
+  notEmbedded: boolean = true;
 
   selectedWork: WorkToDo;
   questionId?: string;
@@ -144,6 +149,13 @@ export class TestJobComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Determine if page should render in embedded mode
+    var query = document.location.search.substr(1)
+    var embedded_query = /embedded=(true|false)/g.exec(query);
+    if (embedded_query) {
+      this.notEmbedded = !(embedded_query[1] == 'true');
+    }
+
     this.userNonce = localStorage.getItem('user_nonce');
     const maybe_local_sent_count = localStorage.getItem('local_sent_count');
     if (maybe_local_sent_count !== null) {
@@ -171,19 +183,29 @@ export class TestJobComponent implements OnInit {
   public sendScoreToApi() {
     console.log('test click');
 
-    this.crowdSourceApiService.postAnswer(
-         {
-          questionId: this.questionId,
-          userNonce: this.userNonce,
-          readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
-          toxic: this.toxicityAnswer,
-          obscene: this.obsceneAnswer,
-          insult: this.insultAnswer,
-          threat: this.threatAnswer,
-          identityHate: this.hateAnswer,
-          comments: this.comments
-        } as TestJobCrowdSourceAnswer,
-        this.customClientJobKey)
+    const answer: TestJobCrowdSourceAnswer = {
+      questionId: this.questionId,
+      userNonce: this.userNonce,
+      readableAndInEnglish: this.readableAndInEnglish ? YES: NO,
+      toxic: this.toxicityAnswer,
+      obscene: this.obsceneAnswer,
+      insult: this.insultAnswer,
+      threat: this.threatAnswer,
+      identityHate: this.hateAnswer,
+      comments: this.comments
+    };
+
+    // If we have a parent window, send message to it with the answer. This
+    // allows the crowdsourcing interface to be embedded in an iFrame and
+    // communicate with the parent window.
+    if (window.self != window.top) {
+      console.log('sending message with the answer to parent window');
+      window.parent.postMessage(JSON.stringify(answer), '*');
+    } else {
+      console.log('not sending message because no parent window');
+    }
+
+    this.crowdSourceApiService.postAnswer(answer, this.customClientJobKey)
         .subscribe(
             (data: {}) => {
               console.log(

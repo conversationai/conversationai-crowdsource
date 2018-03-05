@@ -1,7 +1,7 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <h1>Conversation AI Crowdsourcing Demo</h1>
 
-<div class="counts">
+<div class="counts" *ngIf="notEmbedded">
   <div>my worker id: {{userNonce}}</div>
   <div>local_sent_count: {{local_sent_count}}</div>
   <div>training_answer_count: {{training_answer_count}}</div>
@@ -17,7 +17,7 @@
 </div>
 
 <div *ngIf="question">
-  <div class="id">{{question.id}}</div>
+  <div class="id" *ngIf="notEmbedded">{{question.id}}</div>
   <div class="text-header">Comment to rate:</div>
   <div class="text">{{question.text}}</div>
 
