@@ -31,6 +31,9 @@ interface JobQualitySummary {
   toanswer_mean_score: number;
 }
 
+// Constants for data collection
+const YES = 'Yes';
+const NO = 'No';
 
 @Component({
   selector: 'app-root',
@@ -42,6 +45,7 @@ export class AppComponent implements OnInit {
   errorMessage: string|null;
 
   customClientJobKey: string = '';
+  notEmbedded: boolean = true;
 
   selectedWork: WorkToDo;
   questionId: string;
@@ -80,6 +84,7 @@ export class AppComponent implements OnInit {
   chooseRandomWorkToDo(data: WorkToDo[]): void {
     this.selectedWork = data[getRandomInt(0, data.length - 1)];
     console.log('Work to do: ', this.selectedWork);
+
     this.questionId = this.selectedWork.question_id;
     this.setDocumentHash();
     this.question = this.selectedWork.question;
@@ -160,8 +165,16 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Extract ClientJobKey from hash if specified
     const parts = document.location.hash.substr(1).split('/');
     this.customClientJobKey = parts[0];
+
+    // Determine if page should render in embedded mode
+    var query = document.location.search.substr(1)
+    var embedded_query = /embedded=(true|false)/g.exec(query);
+    if (embedded_query) {
+      this.notEmbedded = !(embedded_query[1] == 'true');
+    }
 
     this.userNonce = localStorage.getItem('user_nonce');
     const maybe_local_sent_count = localStorage.getItem('local_sent_count');
@@ -190,20 +203,32 @@ export class AppComponent implements OnInit {
       answerPath += '/' + this.customClientJobKey;
     }
 
+    const answer = {
+      questionId: this.questionId,
+      userNonce: this.userNonce,
+      readableAndInEnglish: this.readableAndInEnglish ? YES: NO,
+      toxic: this.toxicityAnswer,
+      obscene: this.obsceneAnswer,
+      insult: this.insultAnswer,
+      threat: this.threatAnswer,
+      identityHate: this.hateAnswer,
+      comments: this.comments
+    };
+
+    // If we have a parent window, send message to it with the answer. This
+    // allows the crowdsourcing interface to be embedded in an iFrame and
+    // communicate with the parent window.
+    if (window.self != window.top) {
+      console.log('sending message with the answer to parent window');
+      window.parent.postMessage(JSON.stringify(answer), '*');
+    } else {
+      console.log('not sending message because no parent window');
+    }
+
     this.http
-        .post(answerPath, {
-          questionId: this.questionId,
-          userNonce: this.userNonce,
-          readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
-          toxic: this.toxicityAnswer,
-          obscene: this.obsceneAnswer,
-          insult: this.insultAnswer,
-          threat: this.threatAnswer,
-          identityHate: this.hateAnswer,
-          comments: this.comments
-        })
-        .subscribe(
-            (data: {}) => {
+      .post(answerPath, answer)
+      .subscribe(
+        (data: {}) => {
               console.log(
                   `sent score; got response:` + JSON.stringify(data, null, 2));
               this.local_sent_count += 1;
