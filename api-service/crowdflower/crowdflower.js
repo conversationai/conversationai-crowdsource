@@ -17,20 +17,22 @@
   name="question_comments">
 </cml:hidden>
 
-<script>
-require(['jquery-noconflict'], function($) {
+  <script>
+  // JQuery include copied from CrowdFlower documentation
+  require(['jquery-noconflict'], function($) {
     //Ensure MooTools is where it must be
     Window.implement('$', function(el, nc){
-	return document.id(el, nc, this.document);
+      return document.id(el, nc, this.document);
     });
 
     var $ = window.jQuery;
 
     window.onmessage = function(e){
-	console.log('got message', e.data);
-	var data = JSON.parse(e.data);
+      console.log('got message', e.data);
+      var data = JSON.parse(e.data);
 
-	$('.question_comments')[0].value = e.data;
+      // TODO: add function to validate data
+      $('.question_comments')[0].value = e.data;
     };
-});
+  });
 </script>

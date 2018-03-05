@@ -170,7 +170,7 @@ export class AppComponent implements OnInit {
     var query = document.location.search.substr(1)
     var embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
-      this.notEmbedded = (embedded_query[1] == 'true') ? false : true;
+      this.notEmbedded = !(embedded_query[1] == 'true');
     }
 
     this.userNonce = localStorage.getItem('user_nonce');
@@ -200,12 +200,14 @@ export class AppComponent implements OnInit {
       answerPath += '/' + this.customClientJobKey;
     }
 
+    const yesEnglish = 'Yes';
+    const noEnglish = 'No';
     const answer = {
       questionId: this.questionId,
       userNonce: this.userNonce,
-      readableAndInEnglish: this.readableAndInEnglish ? 'Yes' : 'No',
+      readableAndInEnglish: this.readableAndInEnglish ? yesEnglish: noEnglish,
       toxic: this.toxicityAnswer,
-      nobscene: this.obsceneAnswer,
+      obscene: this.obsceneAnswer,
       insult: this.insultAnswer,
       threat: this.threatAnswer,
       identityHate: this.hateAnswer,
