@@ -103,12 +103,8 @@ export class TestJobComponent implements OnInit {
     }
     console.log(`user_nonce: ` + this.userNonce);
 
-    // TODO(rachelrosen): Figure out why switchMap doesn't work on
-    // initialization.
-    //let foo = this.route.paramMap.switchMap((params: ParamMap) => {
-    //  this.updateIds(params);
-    //  return new Observable<{}>();
-    //});
+    // TODO(rachelrosen): Refactor this code to use a more asynchronous pattern,
+    // e.g. nextWork$ = this.route.paramMap.switchMap((params: ParamMap) =>{...});
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.updateIds(params);
     });
@@ -164,15 +160,7 @@ export class TestJobComponent implements OnInit {
               this.local_sent_count += 1;
               localStorage.setItem(
                   'local_sent_count', this.local_sent_count.toString());
-              if (this.customClientJobKey) {
-                const urlParams: JobAndQuestionUrlParams = {
-                  customClientJobKey: this.customClientJobKey,
-                };
-                if (this.questionId) {
-                  urlParams.questionId = this.questionId;
-                }
-                this.router.navigate(['/test_job', urlParams]);
-              }
+              this.questionId = '';
               this.getNextWorkItem();
             },
             (e) => {

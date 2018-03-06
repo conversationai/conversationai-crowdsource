@@ -43,11 +43,9 @@ import { AppComponent } from './app.component';
 import { TestJobComponent } from './test_job.component';
 import { CrowdSourceApiService} from './crowd_source_api.service';
 
-// TODO(rachelrosen): Make some or all of these optional parameters instead of
-// route parameters.
 const appRoutes: Routes = [
-  // TODO(rachelrosen): Delete the path without the custom job key, since that
-  // should be required for all jobs.
+  // This path (with no parameters) is needed because paramMap will use the
+  // customClientJobKey in matrix url notation after the initial load.
   {
     path: 'test_job',
     component: TestJobComponent
