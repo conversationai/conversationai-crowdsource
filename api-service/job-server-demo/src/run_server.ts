@@ -28,6 +28,13 @@ if (process.env['NODE_ENV'] !== 'development' &&
   process.exit(1);
 }
 
+// Allow the port to be overridden by an environment variable in dev
+// so all services can be run locally simultaneously.
+if (process.env['NODE_ENV'] == 'development' && process.env['NODE_PORT']) {
+  configuration.port = (process.env['NODE_PORT'] || configuration.port);
+  console.log('Overriding the configured port with the NODE_PORT env variable');
+}
+
 if (!configuration.cloudProjectId) {
   console.error(
       'The config file build/config/server_config.json needs to specify' +
@@ -59,6 +66,7 @@ if (IS_PRODUCTION) {
 }
 
 import * as serving from './serving'
+
 let server = new serving.Server(configuration);
 server.start()
     .then(() => {
