@@ -66,7 +66,6 @@ if (IS_PRODUCTION) {
 }
 
 import * as serving from './serving'
-
 let server = new serving.Server(configuration);
 server.start()
     .then(() => {
