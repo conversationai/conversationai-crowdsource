@@ -40,6 +40,7 @@ import {CdkTableModule} from '@angular/cdk/table';
 import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
+import { BaseJobComponent } from './base_job.component';
 import { TestJobComponent } from './test_job.component';
 import { CrowdSourceApiService} from './crowd_source_api.service';
 
@@ -105,6 +106,7 @@ const appRoutes: Routes = [
   ],
   declarations: [
     AppComponent,
+    BaseJobComponent,
     TestJobComponent
   ],
   providers: [CrowdSourceApiService],
