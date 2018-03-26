@@ -23,7 +23,7 @@ Then from this directory, use yarn to install the local package dependencies:
 yarn install
 ```
 
-Setup the initial `build` directory.
+Setup the initial `build` directory and copy the server_config templates there:
 
 ```
 yarn run setup
@@ -33,14 +33,13 @@ yarn run setup
 
 Before you can deploy, you need to:
 
-1.  Copy the `server_config.template.json` file to `build/config/server_config.json`.
-2.  In the `build/config/server_config.json` file, set these values:
+1.  In the `build/config/server_config.json` file, set these values:
 
     * `cloudProjectId` This is the name of your google cloud project.
     * `clientJobKey` This is a client job key to access the api-server.
     * `apiUrl` This should be the URL of the api-server.
 
-3.  Copy the static files you want to be served into `build/static` (The
+2.  Copy the static files you want to be served into `build/static` (The
     `server_config.json` variable named `staticDir` has a default value set to
     be `build/static`). For example, once the
     [webapp-demo](../webapp-demo/README.md) is built, you can do:
