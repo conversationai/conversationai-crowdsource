@@ -11,7 +11,6 @@ before_install:
   - sh -e /etc/init.d/xvfb start
   - cd api-service/webapp-demo
   - npm install -g yarn typings typescript ts-node mocha protractor angular-cli karma-cli
-  - npm run setup
 install:
   - yarn install
 script:
