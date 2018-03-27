@@ -29,6 +29,7 @@ module.exports = function (config) {
     autoWatch: true,
     browsers: ['Chrome'],
     singleRun: false,
+    browserNoActivityTimeout: 50000,
     customLaunchers: {
       Chrome_travis_ci: {
         base: 'Chrome',
