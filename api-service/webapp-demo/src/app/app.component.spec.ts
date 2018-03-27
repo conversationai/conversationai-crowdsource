@@ -1,4 +1,6 @@
+import { Component } from '@angular/core';
 import { TestBed, async } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 import {
   MatAutocompleteModule,
@@ -37,6 +39,14 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 
+@Component({
+  selector: 'app-test',
+  template: '<app-root></app-root>'
+})
+class AppTestComponent {
+
+}
+
 describe('AppComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -47,29 +57,18 @@ describe('AppComponent', () => {
         MatRadioModule,
         MatCheckboxModule,
         MatButtonModule,
+        RouterTestingModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        AppTestComponent
       ],
     }).compileComponents();
   }));
 
   it('should create the app', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
+    const fixture = TestBed.createComponent(AppTestComponent);
     const app = fixture.debugElement.componentInstance;
     expect(app).toBeTruthy();
-  }));
-
-  xit(`should have as title 'app'`, async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('app');
-  }));
-
-  xit('should render title in a h1 tag', async(() => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to app!');
   }));
 });
