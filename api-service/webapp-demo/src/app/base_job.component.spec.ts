@@ -1,4 +1,4 @@
-import { Component, Injectable } from '@angular/core';
+import { Component, Injectable, ViewChild } from '@angular/core';
 import { Location } from '@angular/common';
 import { TestBed, async, inject } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -16,10 +16,25 @@ import {
   ResponseOptions,
   XHRBackend
 } from '@angular/http';
+import { By } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { BaseJobComponent } from './base_job.component';
 import { CrowdSourceApiService } from './crowd_source_api.service';
 
+// A simple Component that extends BaseJobComponent.
+@Component({
+  selector: 'my-job',
+  template: `
+    <div *ngIf="question !== null">{{questionId}} {{question.text}}</div>
+    <button id="sendScoreButton" (click)="sendScoreToApi()">Send score</button>
+  `
+})
+class MyJobComponent extends BaseJobComponent {
+  customClientJobKey = 'testJobKey';
+  routerPath = '/my_job';
+}
+
+// Test component wrapper for BaseJobComponent.
 @Component({
   selector: 'base-job-test',
   template: "<base-job></base-job>"
@@ -27,20 +42,13 @@ import { CrowdSourceApiService } from './crowd_source_api.service';
 class BaseJobTestComponent {
 }
 
+// Test component wrapper for MyJobComponent.
 @Component({
   selector: 'base-job-extended-test',
   template: "<my-job></my-job>"
 })
 class BaseJobExtendedTestComponent {
-}
-
-@Component({
-  selector: 'my-job',
-  template: `<div *ngIf="question !== null">{{question.text}}</div>`
-})
-class MyJobComponent extends BaseJobComponent {
-  customClientJobKey = 'testJobKey';
-  routerPath = '/my_job';
+  @ViewChild(MyJobComponent) myJobComponent: MyJobComponent;
 }
 
 // Stub for ActivatedRoute.
@@ -59,6 +67,7 @@ class ActivatedRouteStub {
   }
 }
 
+// A stub class that implements ParamMap.
 class ParamMapStub implements ParamMap {
   constructor(private params: {[key: string]: string}) {}
   has(name: string): boolean {
@@ -79,6 +88,29 @@ class ParamMapStub implements ParamMap {
     }
     return objKeys;
   }
+}
+
+// TODO(rachelrosen): Currently we have to expect every http call in order to
+// be able to call .verify() at the end; investigate if there is another way
+// to "flush" the controller so that we don't have to check the job_quality
+// and worker quality calls are made in every test where we want to use
+// verify().
+function verifyQualityApiCalls(httpMock: HttpTestingController) {
+  // Verify job quality call.
+  httpMock.expectOne('/api/job_quality').flush({
+    toanswer_count: 50,
+    toanswer_mean_score: 2
+  });
+
+  // Verify worker quality call.
+  httpMock.expectOne((req: HttpRequest<any>): boolean => {
+    const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
+    const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
+    return match !== null;
+  }).flush({
+    answer_count: 20,
+    mean_score: 1.5
+  });
 }
 
 let activatedRoute: ActivatedRouteStub;
@@ -130,44 +162,183 @@ describe('BaseComponent', () => {
 
   it('Loads question', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
+    // Manually update the url params.
     activatedRoute.testParams = {
       customClientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
-    httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      const workRequestUrlRegExp = /\/api\/work\/?(\w+)?/;
-      const match = workRequestUrlRegExp.exec(req.urlWithParams);
-      if (match !== null) {
-        expect(match[1]).toEqual('testJobKey');
-      }
-      return match !== null;
-    }).flush([{
+    // Verify the call to load a question/
+    httpMock.expectOne('/api/work/testJobKey').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
       answer_count: 5
     }]);
 
-    httpMock.expectOne('/api/job_quality').flush({
-      toanswer_count: 50,
-      toanswer_mean_score: 2
-    });
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('foo');
+    expect(fixture.nativeElement.textContent).toContain('Hello world!');
 
-    httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
-      const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
-      return match !== null;
-    }).flush({
-      answer_count: 20,
-      mean_score: 1.5
-    });
+    verifyQualityApiCalls(httpMock);
 
+    // Verify no outstanding requests.
     httpMock.verify();
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      expect(fixture.nativeElement.textContent).toContain('Hello world!');
+  }))));
+
+  it('Loads question with question id', async(
+    (inject([HttpTestingController], (httpMock: HttpTestingController) => {
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      customClientJobKey: 'testJobKey',
+      questionId: 'foo'
+    };
+    const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
+    fixture.detectChanges();
+
+    // Verify the call to load a question/
+    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+      question_id: 'foo',
+      question: {id: 'bar', text: 'Hello world!'},
+      answers_per_question: 10,
+      answer_count: 5
     });
+
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('foo');
+    expect(fixture.nativeElement.textContent).toContain('Hello world!');
+
+    verifyQualityApiCalls(httpMock);
+
+    // Verify no outstanding requests.
+    httpMock.verify();
+  }))));
+
+  it('Sends score', async(
+    (inject([HttpTestingController], (httpMock: HttpTestingController) => {
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      customClientJobKey: 'testJobKey'
+    };
+    const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
+    fixture.detectChanges();
+
+    // Loading the first question.
+    httpMock.expectOne('/api/work/testJobKey').flush([{
+      question_id: 'foo',
+      question: {id: 'bar', text: 'First question'},
+      answers_per_question: 10,
+      answer_count: 5
+    }]);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('foo');
+    expect(fixture.nativeElement.textContent).toContain('First question');
+
+    verifyQualityApiCalls(httpMock);
+
+    // Verify no outstanding requests.
+    httpMock.verify();
+
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      customClientJobKey: 'testJobKey',
+      questionId: 'foo'
+    };
+    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
+
+    // Sending the score.
+    httpMock.expectOne((req: HttpRequest<any>): boolean => {
+      return req.urlWithParams === '/api/answer/testJobKey'
+        && req.body.questionId === 'foo';
+    }).flush({});
+
+    // A new question should load after sending the score.
+    httpMock.expectOne('/api/work/testJobKey').flush([{
+      question_id: 'testing',
+      question: {id: 'abc', text: 'New question!'},
+      answers_per_question: 10,
+      answer_count: 5
+    }]);
+
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('testing');
+    expect(fixture.nativeElement.textContent).toContain('New question!');
+
+    verifyQualityApiCalls(httpMock);
+
+    // Verify no outstanding requests.
+    httpMock.verify();
+  }))));
+
+  it('Loading question error', async(
+    (inject([HttpTestingController], (httpMock: HttpTestingController) => {
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      customClientJobKey: 'testJobKey'
+    };
+    const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
+    fixture.detectChanges();
+
+    // TODO(rachelrosen): Figure out how to set the message field in the test
+    // such that we can check the exact error message sent (currently it nests
+    // the text passed inside an error object, different from the
+    // HttpErrorResponse the code gets outside of tests.
+    httpMock.expectOne('/api/work/testJobKey').error(new ErrorEvent('Oh no!'));
+
+    fixture.detectChanges();
+    expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
+      'Http failure response for /api/work/testJobKey');
+
+    verifyQualityApiCalls(httpMock);
+
+    // Verify no outstanding requests.
+    httpMock.verify();
+  }))));
+
+  it('Sending score error', async(
+    (inject([HttpTestingController], (httpMock: HttpTestingController) => {
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      customClientJobKey: 'testJobKey',
+      questionId: 'foo'
+    };
+    const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
+    fixture.detectChanges();
+
+    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+      question_id: 'foo',
+      question: {id: 'bar', text: 'First question'},
+      answers_per_question: 10,
+      answer_count: 5
+    });
+
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('foo');
+    expect(fixture.nativeElement.textContent).toContain('First question');
+
+    verifyQualityApiCalls(httpMock);
+
+    // Verify no outstanding requests.
+    httpMock.verify();
+
+    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
+
+    // Sending the score.
+    httpMock.expectOne((req: HttpRequest<any>): boolean => {
+      return req.urlWithParams === '/api/answer/testJobKey'
+        && req.body.questionId === 'foo';
+    }).error(new ErrorEvent('Oh no!'));
+
+    fixture.detectChanges();
+    expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
+      'Http failure response for /api/answer/testJobKey');
+
+    // No new question was loaded since there was an error.
+    expect(fixture.nativeElement.textContent).toContain('foo');
+    expect(fixture.nativeElement.textContent).toContain('First question');
+
+    // Verify no outstanding requests.
+    httpMock.verify();
   }))));
 });
