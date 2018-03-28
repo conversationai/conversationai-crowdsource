@@ -41,6 +41,7 @@ import {HttpClientModule} from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { BaseJobComponent } from './base_job.component';
+import { IdentityCategoryHateJobComponent } from './identity_category_hate_job.component';
 import { TestJobComponent } from './test_job.component';
 import { CrowdSourceApiService} from './crowd_source_api.service';
 
@@ -54,6 +55,14 @@ const appRoutes: Routes = [
   {
     path: 'test_job/:customClientJobKey',
     component: TestJobComponent
+  },
+  {
+    path: 'identity_category_hate_job',
+    component: IdentityCategoryHateJobComponent
+  },
+  {
+    path: 'identity_category_hate_job/:customClientJobKey',
+    component: IdentityCategoryHateJobComponent
   },
   {
     path: '',
@@ -107,6 +116,7 @@ const appRoutes: Routes = [
   declarations: [
     AppComponent,
     BaseJobComponent,
+    IdentityCategoryHateJobComponent,
     TestJobComponent
   ],
   providers: [CrowdSourceApiService],

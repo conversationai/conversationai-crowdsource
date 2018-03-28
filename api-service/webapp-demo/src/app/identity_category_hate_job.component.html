@@ -1,0 +1,43 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<h1>Conversation AI Crowdsourcing Demo</h1>
+
+<div class="counts" *ngIf="notEmbedded">
+  <div>my worker id: {{userNonce}}</div>
+  <div>local_sent_count: {{local_sent_count}}</div>
+  <div>training_answer_count: {{training_answer_count}}</div>
+  <div>user_mean_score: {{user_mean_score}}</div>
+  <div>overall_job_answer_count: {{overall_job_answer_count}}</div>
+  <div>overall_job_mean_score: {{overall_job_mean_score}}</div>
+</div>
+
+<div *ngIf="errorMessage" class="errorMessage" (click)="clearError()">{{errorMessage}}</div>
+
+<div *ngIf="!question">
+  Loading...
+</div>
+
+<div *ngIf="question">
+  <div class="id" *ngIf="notEmbedded">{{question.id}}</div>
+  <div class="text-header">Comment to rate:</div>
+  <div class="text">{{question.text}}</div>
+
+  <div *ngFor="let identity of identities" class="questionWrapper">
+    <mat-checkbox [(ngModel)]="labels[identity].markedAsCategory"
+                  (change)="labels[identity].hateful = labels[identity].markedAsCategory && labels[identity].hateful"
+                  class="identityQuestion">
+      The comment is about the identity group "{{identity}}".
+    </mat-checkbox>
+
+    <mat-checkbox *ngIf="labels[identity].markedAsCategory"
+                  [(ngModel)]="labels[identity].hateful"
+                  class="hatefulQuestion"
+                  color="accent">
+      The comment is hateful towards the identity group "{{identity}}".
+    </mat-checkbox>
+  </div>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
+  </div>
+
+</div>

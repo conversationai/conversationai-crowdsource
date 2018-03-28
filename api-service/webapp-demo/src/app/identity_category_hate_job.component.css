@@ -1,0 +1,41 @@
+.text-header {
+  font-weight: bold;
+}
+
+.text {
+  padding: 10px;
+  border: 1px solid #CCC;
+  margin: 10px;
+}
+
+.counts {
+  text-align: right;
+  padding: 5px;
+  font-size: 80%;
+}
+
+.id {
+  text-align: right;
+  padding: 5px;
+  font-size: 80%;
+}
+
+.errorMessage {
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid #FCC;
+  margin: 10px;
+  color: #933;
+}
+
+.questionWrapper {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.identityQuestion {
+}
+
+.hatefulQuestion {
+  padding: 10px;
+}
