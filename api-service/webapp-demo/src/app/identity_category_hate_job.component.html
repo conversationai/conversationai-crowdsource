@@ -26,7 +26,7 @@
   <!-- TODO(rachelrosen): Consider providing a "sequence" UI where the user is presented with a question for only one
        identity at a time, so that they always see the comment when answering the question, and it doesn't seem like
        "too much".-->
-  <mat-tab-group class="demo-tab-group" (selectedTabChange)="resetQuestionUI()" [(selectedIndex)]="selectedTabIndex">
+  <mat-tab-group id="tabGroup" class="demo-tab-group" (selectedTabChange)="resetQuestionUI()" [(selectedIndex)]="selectedTabIndex">
     <mat-tab label="Boolean hate labels">
       <div class="demo-tab-content">
         <div *ngFor="let identity of identities" class="questionWrapper">

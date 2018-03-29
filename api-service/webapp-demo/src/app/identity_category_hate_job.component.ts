@@ -37,7 +37,7 @@ export class IdentityCategoryHateJobComponent extends BaseJobComponent {
 
   selectedTabIndex = 0;
 
-  identities: string[] = ['group1', 'group2'];
+  @Input() identities: string[] = ['group1', 'group2'];
   detailedHateOptions = [
     {
       text: 'contain slurs, epithets, or profane language directed towards the identity group',
@@ -81,6 +81,9 @@ export class IdentityCategoryHateJobComponent extends BaseJobComponent {
   resetQuestionUI(): void {
     this.booleanLabels = {};
     this.detailLabels = {};
+    if (!this.identities) {
+      return;
+    }
     for (let identity of this.identities) {
       this.booleanLabels[identity] = {
         category: identity,
