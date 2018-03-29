@@ -239,4 +239,12 @@ export class BaseJobComponent implements OnInit {
     this.errorMessage = null;
   }
 
+  // Debugging method that clears the current questionId from the url and
+  // fetches a new question if there is an error.
+  clearQuestionAndGetNext() {
+    this.questionId = null;
+    this.clearError();
+    this.getNextWorkItem();
+  }
+
 }

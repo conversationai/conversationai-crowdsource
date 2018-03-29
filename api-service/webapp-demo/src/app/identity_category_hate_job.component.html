@@ -1,5 +1,4 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<h1>Conversation AI Crowdsourcing Demo</h1>
+<h1>Identity category hate labeling job</h1>
 
 <div class="counts" *ngIf="notEmbedded">
   <div>my worker id: {{userNonce}}</div>
@@ -11,6 +10,9 @@
 </div>
 
 <div *ngIf="errorMessage" class="errorMessage" (click)="clearError()">{{errorMessage}}</div>
+<div *ngIf="errorMessage">
+  <button mat-button (click)="clearQuestionAndGetNext()">Get a new question</button>
+</div>
 
 <div *ngIf="!question">
   Loading...
@@ -21,20 +23,52 @@
   <div class="text-header">Comment to rate:</div>
   <div class="text">{{question.text}}</div>
 
-  <div *ngFor="let identity of identities" class="questionWrapper">
-    <mat-checkbox [(ngModel)]="labels[identity].markedAsCategory"
-                  (change)="labels[identity].hateful = labels[identity].markedAsCategory && labels[identity].hateful"
-                  class="identityQuestion">
-      The comment is about the identity group "{{identity}}".
-    </mat-checkbox>
+  <!-- TODO(rachelrosen): Consider providing a "sequence" UI where the user is presented with a question for only one
+       identity at a time, so that they always see the comment when answering the question, and it doesn't seem like
+       "too much".-->
+  <mat-tab-group class="demo-tab-group" (selectedTabChange)="resetQuestionUI()" [(selectedIndex)]="selectedTabIndex">
+    <mat-tab label="Boolean hate labels">
+      <div class="demo-tab-content">
+        <div *ngFor="let identity of identities" class="questionWrapper">
+          <mat-checkbox [(ngModel)]="booleanLabels[identity].markedAsCategory"
+                        (change)="booleanLabels[identity].hateful = booleanLabels[identity].markedAsCategory && booleanLabels[identity].hateful"
+                        class="identityQuestion">
+            The comment is about the identity group "{{identity}}".
+          </mat-checkbox>
 
-    <mat-checkbox *ngIf="labels[identity].markedAsCategory"
-                  [(ngModel)]="labels[identity].hateful"
-                  class="hatefulQuestion"
-                  color="accent">
-      The comment is hateful towards the identity group "{{identity}}".
-    </mat-checkbox>
-  </div>
+          <mat-checkbox *ngIf="booleanLabels[identity].markedAsCategory"
+                        [(ngModel)]="booleanLabels[identity].hateful"
+                        class="hatefulQuestion"
+                        color="accent">
+            The comment is hateful towards the identity group "{{identity}}".
+          </mat-checkbox>
+        </div>
+      </div>
+    </mat-tab>
+    <mat-tab label="Detailed hate labels">
+      <div class="demo-tab-content">
+        <div *ngFor="let identity of identities" class="questionWrapper">
+          <mat-checkbox [(ngModel)]="detailLabels[identity].markedAsCategory"
+                        class="identityQuestion"
+                        (change)="clearHatefulLabelsIfCategoryDeselected(identity)">
+            The comment is about the identity group "{{identity}}".
+          </mat-checkbox>
+
+          <div *ngIf="detailLabels[identity].markedAsCategory">
+            <div class="hateDetailQuestionHeader">Does this comment...</div>
+            <mat-checkbox *ngFor="let option of detailedHateOptions" class="hateDetailQuestionOption" color="accent"
+                          [(ngModel)]="detailLabels[identity].hatefulLabels[option.key]"
+                          (change)="clearNoneLabelIfHateDetailsSelected($event, noneCheckbox)">
+              {{option.text}} "{{identity}}"?
+            </mat-checkbox>
+            <mat-checkbox #noneCheckbox class="hateDetailQuestionOption" color="accent" (change)="clearHateDetailLabelsIfNoneSelected($event, identity)">
+              None of the above
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 
   <div>
     <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
