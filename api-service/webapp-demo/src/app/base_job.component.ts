@@ -76,6 +76,8 @@ export class BaseJobComponent implements OnInit {
               private crowdSourceApiService: CrowdSourceApiService) {}
 
   ngOnInit(): void {
+    this.updateUrl();
+
     // Determine if page should render in embedded mode
     var query = document.location.search.substr(1)
     var embedded_query = /embedded=(true|false)/g.exec(query);
@@ -133,9 +135,22 @@ export class BaseJobComponent implements OnInit {
     this.questionId = params.get('questionId');
   }
 
-  public sendScoreToApi() {
-    console.log('test click');
+  updateUrl(): void {
+    if (!this.customClientJobKey) {
+      return;
+    }
+    const urlParams: JobAndQuestionUrlParams = {
+      customClientJobKey: this.customClientJobKey,
+    };
 
+    if (this.questionId) {
+      urlParams.questionId = this.questionId;
+    }
+
+    this.router.navigate([this.routerPath, urlParams]);
+  }
+
+  public sendScoreToApi() {
     const answer = this.buildAnswer();
 
     // If we have a parent window, send message to it with the answer. This
@@ -174,11 +189,7 @@ export class BaseJobComponent implements OnInit {
       throw new Error('Trying to pick work, but no job key found');
     }
 
-    const urlParams: JobAndQuestionUrlParams = {
-      customClientJobKey: this.customClientJobKey,
-      questionId: this.questionId
-    };
-    this.router.navigate([this.routerPath, urlParams]);
+    this.updateUrl();
     this.question = this.selectedWork.question;
   }
 
@@ -226,7 +237,6 @@ export class BaseJobComponent implements OnInit {
     this.crowdSourceApiService.getWorkerQuality(this.userNonce)
         .subscribe(
             (data: WorkerQualitySummary) => {
-              console.log(data);
               this.training_answer_count = data.answer_count;
               this.user_mean_score = data.mean_score;
             },
