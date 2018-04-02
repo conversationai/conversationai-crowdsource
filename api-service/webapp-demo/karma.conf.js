@@ -12,6 +12,12 @@ module.exports = function (config) {
       require('karma-coverage-istanbul-reporter'),
       require('@angular/cli/plugins/karma')
     ],
+    files: [
+      {pattern: './src/test.ts', watched: false},
+      // Include Material theme file for material components to work correctly
+      // in tests.
+      'node_modules/@angular/material/prebuilt-themes/indigo-pink.css'
+    ],
     client:{
       clearContext: false // leave Jasmine Spec Runner output visible in browser
     },
@@ -28,6 +34,7 @@ module.exports = function (config) {
     logLevel: config.LOG_INFO,
     autoWatch: true,
     browsers: ['Chrome'],
+    //browsers: ['ChromeHeadless'], # Use for remote work
     singleRun: false,
     browserDisconnectTolerance: 2,
     browserNoActivityTimeout: 50000,

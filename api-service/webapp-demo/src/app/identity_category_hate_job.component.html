@@ -46,8 +46,8 @@
       </div>
     </mat-tab>
     <mat-tab label="Detailed hate labels">
-      <div class="demo-tab-content">
-        <div *ngFor="let identity of identities" class="questionWrapper">
+      <div class="demo-tab-content detailedLabels">
+        <div *ngFor="let identity of identities" class="questionWrapper foo">
           <mat-checkbox [(ngModel)]="detailLabels[identity].markedAsCategory"
                         class="identityQuestion"
                         (change)="clearHatefulLabelsIfCategoryDeselected(identity)">
