@@ -76,8 +76,6 @@ export class BaseJobComponent implements OnInit {
               private crowdSourceApiService: CrowdSourceApiService) {}
 
   ngOnInit(): void {
-    this.updateUrl();
-
     // Determine if page should render in embedded mode
     var query = document.location.search.substr(1)
     var embedded_query = /embedded=(true|false)/g.exec(query);
