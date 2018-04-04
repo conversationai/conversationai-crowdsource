@@ -27,12 +27,12 @@ const YES = 'Yes';
 const NO = 'No';
 
 @Component({
-  selector: 'test-job',
-  templateUrl: './test_job.component.html',
-  styleUrls: ['./test_job.component.css']
+  selector: 'toxicity-subtype-job',
+  templateUrl: './toxicity_subtypes_job.component.html',
+  styleUrls: ['./toxicity_subtypes_job.component.css']
 })
-export class TestJobComponent extends BaseJobComponent {
-  @Input() routerPath = '/test_job';
+export class ToxicitySubtypesJobComponent extends BaseJobComponent {
+  @Input() routerPath = '/toxicity_subtypes';
 
   readableAndInEnglish: boolean;
   toxicityAnswer: string;
