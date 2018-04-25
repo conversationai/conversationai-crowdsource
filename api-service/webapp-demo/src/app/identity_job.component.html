@@ -13,7 +13,7 @@
   <div class="text-header">Comment to rate:</div>
   <div class="text">{{question.text}}</div>
 
-  <div class="demo-tab-content">
+  <div class="demo-content">
     <div class="text-header">Please check each identity that this comment refers to</div>
     <div *ngFor="let identity of identities" class="questionWrapper">
       <mat-checkbox [(ngModel)]="booleanLabels[identity].markedAsCategory"

@@ -1,24 +1,18 @@
 import { Component, Injectable, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed, async, inject } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
-import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import {
   HttpClientTestingModule,
   HttpTestingController
 } from '@angular/common/http/testing';
-import {
-  MatButtonModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatInputModule,
-  MatTabsModule,
-} from '@angular/material';
+import { MatButtonModule, MatCheckboxModule } from '@angular/material';
 import { By } from '@angular/platform-browser';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { BaseJobComponent } from './base_job.component';
 import { IdentityJobComponent } from './identity_job.component';
 import { CrowdSourceApiService } from './crowd_source_api.service';
+import { ActivatedRouteStub, setupQuestionMocks } from './test_util';
 
 // Test component wrapper for BaseJobComponent.
 @Component({
@@ -34,58 +28,6 @@ class IdentityJobTestComponent {
   setTestIdentities(identities: string[]) {
     this.testIdentities = identities;
   }
-}
-
-// Stub for ActivatedRoute.
-@Injectable()
-class ActivatedRouteStub {
-  private paramsSubject = new BehaviorSubject(this.testParams);
-  paramMap = this.paramsSubject.asObservable();
-
-  private stubTestParams: ParamMap;
-  get testParams() {
-    return this.stubTestParams;
-  }
-  set testParams(params: {}) {
-    this.stubTestParams = new ParamMapStub(params);
-    this.paramsSubject.next(this.stubTestParams);
-  }
-}
-
-// A stub class that implements ParamMap.
-class ParamMapStub implements ParamMap {
-  constructor(private params: {[key: string]: string}) {}
-  has(name: string): boolean {
-    return this.params.hasOwnProperty(name);
-  }
-  get(name: string): string | null {
-    return this.params[name];
-  }
-
-  getAll(name: string): string[] {
-    return [this.params[name]];
-  }
-
-  get keys(): string[] {
-    let objKeys = [];
-    for(let key in this.params) {
-      objKeys.push(key);
-    }
-    return objKeys;
-  }
-}
-
-function setupQuestionMocks(httpMock: HttpTestingController,
-                            customClientJobKey: string,
-                            fixture: ComponentFixture<IdentityJobTestComponent>) {
-  // Verify the call to load a question.
-  httpMock.expectOne('/api/work/' + customClientJobKey).flush([{
-    question_id: 'foo',
-    question: {id: 'bar', text: 'Hello world!'},
-    answers_per_question: 10,
-    answer_count: 5
-  }]);
-  fixture.detectChanges();
 }
 
 function checkIdentity(fixture: ComponentFixture<IdentityJobTestComponent>,
@@ -106,10 +48,7 @@ describe('IdentityJobComponent tests', () => {
         HttpClientTestingModule,
         FormsModule,
         MatButtonModule,
-        MatCardModule,
         MatCheckboxModule,
-        MatInputModule,
-        MatTabsModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes(
           [

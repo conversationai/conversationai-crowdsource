@@ -29,6 +29,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { BaseJobComponent } from './base_job.component';
 import { IdentityCategoryHateJobComponent } from './identity_category_hate_job.component';
 import { CrowdSourceApiService } from './crowd_source_api.service';
+import { ActivatedRouteStub, setupQuestionMocks } from './test_util';
 
 const HATE_DETAIL_OPTION_COUNT = 5;
 const DETAIL_TAB = 1;
@@ -47,58 +48,6 @@ class IdentityCategoryHateJobTestComponent {
   setTestIdentities(identities: string[]) {
     this.testIdentities = identities;
   }
-}
-
-// Stub for ActivatedRoute.
-@Injectable()
-class ActivatedRouteStub {
-  private paramsSubject = new BehaviorSubject(this.testParams);
-  paramMap = this.paramsSubject.asObservable();
-
-  private stubTestParams: ParamMap;
-  get testParams() {
-    return this.stubTestParams;
-  }
-  set testParams(params: {}) {
-    this.stubTestParams = new ParamMapStub(params);
-    this.paramsSubject.next(this.stubTestParams);
-  }
-}
-
-// A stub class that implements ParamMap.
-class ParamMapStub implements ParamMap {
-  constructor(private params: {[key: string]: string}) {}
-  has(name: string): boolean {
-    return this.params.hasOwnProperty(name);
-  }
-  get(name: string): string | null {
-    return this.params[name];
-  }
-
-  getAll(name: string): string[] {
-    return [this.params[name]];
-  }
-
-  get keys(): string[] {
-    let objKeys = [];
-    for(let key in this.params) {
-      objKeys.push(key);
-    }
-    return objKeys;
-  }
-}
-
-function setupQuestionMocks(httpMock: HttpTestingController,
-                            customClientJobKey: string,
-                            fixture: ComponentFixture<IdentityCategoryHateJobTestComponent>) {
-  // Verify the call to load a question.
-  httpMock.expectOne('/api/work/' + customClientJobKey).flush([{
-    question_id: 'foo',
-    question: {id: 'bar', text: 'Hello world!'},
-    answers_per_question: 10,
-    answer_count: 5
-  }]);
-  fixture.detectChanges();
 }
 
 function verifyQualityApiCalls(httpMock: HttpTestingController) {
