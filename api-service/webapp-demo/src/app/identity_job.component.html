@@ -1,0 +1,38 @@
+<h1>Identity category hate labeling job</h1>
+
+<div *ngIf="errorMessage">
+  <button mat-button class="errorMessage" (click)="clearQuestionAndGetNext()">Oops, something went wrong.  Click here to try a new question</button>
+</div>
+
+<div *ngIf="!question">
+  Loading...
+</div>
+
+<div *ngIf="question">
+  <div class="id" *ngIf="notEmbedded">question_id: {{question.id}}</div>
+  <div class="text-header">Comment to rate:</div>
+  <div class="text">{{question.text}}</div>
+
+  <div class="demo-tab-content">
+    <div class="text-header">Please check each identity that this comment refers to</div>
+    <div *ngFor="let identity of identities" class="questionWrapper">
+      <mat-checkbox [(ngModel)]="booleanLabels[identity].markedAsCategory"
+                    class="identityQuestion">
+        {{identity}}
+      </mat-checkbox>
+    </div>
+  </div>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
+  </div>
+
+  <div>
+    <p>Pro tips:</p>
+    <ul>
+      <li>Use the "s" key to submit</li>
+      <li>Use the tab key to cycle through the checkboxes and press space on a checkbox to toggle</li>
+    </ul>
+  </div>
+
+</div>
