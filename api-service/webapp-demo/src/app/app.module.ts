@@ -74,6 +74,14 @@ const appRoutes: Routes = [
     component: IdentityJobComponent
   },
   {
+    path: 'test_question_filter',
+    component: TestQuestionFilterComponent
+  },
+  {
+    path: 'test_question_filter/:customClientJobKey',
+    component: TestQuestionFilterComponent
+  },
+  {
     path: '',
     redirectTo: '/test_job',
     pathMatch: 'full'
