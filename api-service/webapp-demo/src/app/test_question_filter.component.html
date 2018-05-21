@@ -1,0 +1,35 @@
+<h1>Choosing test questions for the identity hate job</h1>
+
+We want a set of questions that reflect examples of both hateful and non-hateful discussions
+about a mix of identities, that we can use to screen potential raters.
+<br>
+Good test questions should:<br>
+<ul>
+  <li>Not be ambiguous. (If you need to spend more than a few seconds figuring out if the comment is
+    hateful or not, or think it needs more context, it's probably a bad test question).</li>
+  <li>Have a clear reference to an identity. If the comment is too vague (e.g. mentions religious
+    people in general but not a specific religious group), then it can't be used to gauge a rater's
+    understanding of what is and isn't identity hate.</li>
+  <li>Be examples of both hateful and not hateful things. We want to determine if a rater can tell the
+    difference.</li>
+</ul>
+
+<div *ngIf="errorMessage">
+  <button mat-button class="errorMessage" (click)="clearQuestionAndGetNext()">Oops, something went wrong.  Click here to try a new question</button>
+</div>
+
+<div *ngIf="!question">
+  Loading...
+</div>
+
+<div *ngIf="question">
+  <div class="id" *ngIf="notEmbedded">question_id: {{question.id}}</div>
+  <div class="text-header">Would this comment make a good test question for the identity hate labeling job?</div>
+  <div class="text">{{question.text}}</div>
+
+  <div class="demo-content">
+    <button mat-raised-button id="yesButton" color="primary" (click)="setUserSelection('yes')">Yes</button>
+    <button mat-raised-button id="notSureButton" color="primary" (click)="setUserSelection('not_sure')">Not sure</button>
+    <button mat-raised-button id="noButton" color="primary" (click)="setUserSelection('no')">No</button>
+  </div>
+</div>

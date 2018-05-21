@@ -43,6 +43,7 @@ import { AppComponent } from './app.component';
 import { BaseJobComponent } from './base_job.component';
 import { IdentityJobComponent } from './identity_job.component';
 import { IdentityCategoryHateJobComponent } from './identity_category_hate_job.component';
+import { TestQuestionFilterComponent } from './test_question_filter.component';
 import { TestJobComponent } from './test_job.component';
 import { CrowdSourceApiService} from './crowd_source_api.service';
 
@@ -72,6 +73,14 @@ const appRoutes: Routes = [
   {
     path: 'identity_job/:customClientJobKey',
     component: IdentityJobComponent
+  },
+  {
+    path: 'test_question_filter',
+    component: TestQuestionFilterComponent
+  },
+  {
+    path: 'test_question_filter/:customClientJobKey',
+    component: TestQuestionFilterComponent
   },
   {
     path: '',
@@ -127,7 +136,8 @@ const appRoutes: Routes = [
     BaseJobComponent,
     IdentityJobComponent,
     IdentityCategoryHateJobComponent,
-    TestJobComponent
+    TestJobComponent,
+    TestQuestionFilterComponent
   ],
   providers: [CrowdSourceApiService],
   bootstrap: [AppComponent]
