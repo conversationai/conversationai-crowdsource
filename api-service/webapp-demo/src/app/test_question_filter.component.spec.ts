@@ -23,6 +23,23 @@ class TestQuestionFilterTestComponent {
   testQuestionFilterComponent: TestQuestionFilterComponent;
 }
 
+function verifyBuildsAnswerOnButtonClick(httpMock: HttpTestingController,
+                                         buttonId: string,
+                                         expectedAnswer: string) {
+  activatedRoute.testParams = {
+    customClientJobKey: 'testJobKey'
+  };
+
+  const fixture = TestBed.createComponent(TestQuestionFilterTestComponent);
+  fixture.detectChanges();
+  setupQuestionMocks(httpMock, 'testJobKey', fixture);
+
+  fixture.debugElement.query(By.css('#' + buttonId)).nativeElement.click();
+
+  const jobComponent = fixture.componentInstance.testQuestionFilterComponent;
+  expect(jobComponent.buildAnswer().testQuestionEval).toEqual(expectedAnswer);
+}
+
 let activatedRoute: ActivatedRouteStub;
 
 describe('TestQuestionFilterComponent tests', () => {
@@ -61,48 +78,14 @@ describe('TestQuestionFilterComponent tests', () => {
   }));
 
   it('Builds yes answer', async((inject([HttpTestingController], (httpMock: HttpTestingController) => {
-    activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
-    };
-
-    const fixture = TestBed.createComponent(TestQuestionFilterTestComponent);
-    fixture.detectChanges();
-    setupQuestionMocks(httpMock, 'testJobKey', fixture);
-
-    fixture.debugElement.query(By.css('#yesButton')).nativeElement.click();
-
-    const jobComponent = fixture.componentInstance.testQuestionFilterComponent;
-    expect(jobComponent.buildAnswer().testQuestionEval).toEqual('yes');
+    verifyBuildsAnswerOnButtonClick(httpMock, 'yesButton', 'yes');
   }))));
 
   it('Builds no answer', async((inject([HttpTestingController], (httpMock: HttpTestingController) => {
-    activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
-    };
-
-    const fixture = TestBed.createComponent(TestQuestionFilterTestComponent);
-    fixture.detectChanges();
-    setupQuestionMocks(httpMock, 'testJobKey', fixture);
-
-    fixture.debugElement.query(By.css('#noButton')).nativeElement.click();
-
-    const jobComponent = fixture.componentInstance.testQuestionFilterComponent;
-    expect(jobComponent.buildAnswer().testQuestionEval).toEqual('no');
+    verifyBuildsAnswerOnButtonClick(httpMock, 'noButton', 'no');
   }))));
 
   it('Builds not sure answer', async((inject([HttpTestingController], (httpMock: HttpTestingController) => {
-    activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
-    };
-
-    const fixture = TestBed.createComponent(TestQuestionFilterTestComponent);
-    fixture.detectChanges();
-    setupQuestionMocks(httpMock, 'testJobKey', fixture);
-
-    fixture.debugElement.query(By.css('#notSureButton')).nativeElement.click();
-
-    const jobComponent = fixture.componentInstance.testQuestionFilterComponent;
-    expect(jobComponent.buildAnswer().testQuestionEval).toEqual('not_sure');
-    console.log(jobComponent.buildAnswer());
+    verifyBuildsAnswerOnButtonClick(httpMock, 'notSureButton', 'not_sure');
   }))));
 });
