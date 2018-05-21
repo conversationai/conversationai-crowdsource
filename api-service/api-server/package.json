@@ -18,7 +18,7 @@
     "@conversationai/wpconvlib": "^0.0.1",
     "@google-cloud/debug-agent": "^1.0.0",
     "@google-cloud/logging": "^1.0.0",
-    "@google-cloud/spanner": "^0.7.1",
+    "@google-cloud/spanner": "^1.4.1",
     "@google-cloud/trace-agent": "^1.0.3",
     "@types/byline": "^4.2.31",
     "@types/chai": "^4.0.4",
