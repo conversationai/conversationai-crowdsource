@@ -14,6 +14,9 @@
     "start-prod": "NODE_ENV='production' node build/server/run_server.js build/config/server_config.json",
     "test": "mocha build/server/*_test.js build/server/setup/*_test.js"
   },
+  "engines": {
+    "node": "8.11.0"
+  },
   "dependencies": {
     "@conversationai/wpconvlib": "^0.0.1",
     "@google-cloud/debug-agent": "^1.0.0",
@@ -24,17 +27,18 @@
     "@types/chai": "^4.0.4",
     "@types/csvtojson": "^1.1.5",
     "@types/line-by-line": "^0.1.1",
+    "@types/node": "^8.10.17",
     "@types/passport": "^0.3.4",
     "@types/request": "^2.0.4",
     "@types/seedrandom": "^2.4.27",
-    "@types/yargs": "^8.0.2",
-    "body-parser": "^1.17.1",
+    "@types/yargs": "^11.0.0",
+    "body-parser": "^1.18.3",
     "byline": "^5.0.0",
     "compression": "^1.6.2",
     "concurrently": "^3.4.0",
     "connect-memcached": "^0.2.0",
     "cookie-parser": "^1.4.3",
-    "core-js": "^2.4.1",
+    "core-js": "^2.5.6",
     "cors": "^2.8.1",
     "csvtojson": "^1.1.9",
     "express": "^4.15.0",
@@ -57,7 +61,7 @@
     "request": "^2.78.0",
     "seedrandom": "^2.4.3",
     "serve-favicon": "^2.3.0",
-    "yargs": "^8.0.2"
+    "yargs": "^11.0.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.3",

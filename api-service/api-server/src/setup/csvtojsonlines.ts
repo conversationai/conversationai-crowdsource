@@ -34,7 +34,7 @@ interface Params {
 async function main(args: Params) {
   let instream = fs.createReadStream(args.infile);
   let outstream = fs.createWriteStream(
-      args.outfile, {flags: 'w', defaultEncoding: 'utf-8'});
+      args.outfile, {flags: 'w', encoding: 'utf-8'});
   let csvToJson = csvtojson();
 
   let lineCount = 0;

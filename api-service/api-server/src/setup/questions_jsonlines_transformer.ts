@@ -143,7 +143,7 @@ async function main(args: Params) {
   // let outQuestionsStream = fs.createWriteStream(args.out_questions_file,
   //   {flags: 'w', defaultEncoding: 'utf-8'});
   let outScoringsStream = fs.createWriteStream(
-      args.out_scorings_file, {flags: 'w', defaultEncoding: 'utf-8'});
+      args.out_scorings_file, {flags: 'w', encoding: 'utf-8'});
   let lineStream = byline.createStream();
   // interpretStream.addOutputStream(QUESTION_STREAM_NAME, outQuestionsStream);
   interpretStream.addOutputStream(SCORING_STREAM_NAME, outScoringsStream);
