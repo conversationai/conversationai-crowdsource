@@ -17,25 +17,25 @@ limitations under the License.
 /*
 Usage:
 
-node build/server/setup/upload_with_answers.js \
+node build/server/setup/custom_uploaders/upload_toxicity_subtypes.js \
   --file="./tmp/real_job/with_answers_mini_10x.json" \
   --question_group="wp_x10k_test" \
   --training_fraction=0.2 \
   --action=print
 
-node build/server/setup/upload_with_answers.js \
+node build/server/setup/custom_uploaders/upload_toxicity_subtypes.js \
   --file="./tmp/real_job/with_answers.json" \
   --question_group="wp_x10k_test" \
   --training_fraction=0.2 \
   --action=insert
 
-node build/server/setup/upload_with_answers.js \
+node build/server/setup/custom_uploaders/upload_toxicity_subtypes.js \
   --file="./tmp/real_job/with_answers.json" \
   --question_group="wp_v1_x10k" \
   --training_fraction=0.2 \
   --action=update
 
-node build/server/setup/upload_with_answers.js \
+node build/server/setup/custom_uploaders/upload_toxicity_subtypes.js \
   --file="./tmp/real_job/with_answers.json" \
   --question_group="wp_x10k_test" \
   --training_fraction=0.2 \
