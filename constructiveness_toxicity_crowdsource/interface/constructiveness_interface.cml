@@ -1,0 +1,111 @@
+<div class="html-element-wrapper">
+
+  <h2 class="html-element-wrapper">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+        <u>Headline</u>
+      </span>
+    </span>
+  </h2>
+  
+  <p class="html-element-wrapper">
+    <span style="background-color: rgb(0, 255, 255);">
+      <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">{{article_title}}</span>
+    </span>
+  </p>
+  
+  <p>
+    <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">by {{article_author}} on {{article_published_date}}</span>
+  </p>
+  
+  <div class="collapse-container">       
+    <div class="collapse-group">    
+      <a target="_blank" data-toggle="collapse" data-target=" .collapse-one" class="collapse-header text-center definition">
+        <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+          <u>Article Text (Click to expand or collapse.) </u>
+        </span>
+      </a>
+      
+      <div class="expand collapse-one collapse-body text-left">   
+        <p class="html-element-wrapper">
+          {{article_text}}
+        </p>
+      </div>  
+    </div>
+  </div>
+  
+  <p></p>
+  <h2 class="html-element-wrapper">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+        <u>Now read the following comment posted on this article.</u>
+      </span>
+    </span>
+  </h2>
+  
+  <p style="border:3px; border-style:solid; border-color:rgb(64,224,208); padding: 1em;">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">{{comment_text}}</span>
+    </span>
+  </p>
+  
+</div>
+
+<h2 class="html-element-wrapper">
+  <span style="color: rgb(0, 0, 0);">
+    <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+      <u>Please answer all of the following questions.</u>
+    </span>
+    <s></s>
+  </span>
+</h2>
+
+<cml:radios label="Do you agree with the commenter's views?" validates="required" name="agree" gold="true" aggregation="agg">
+  <cml:radio label="Yes" value="yes"></cml:radio>
+  <cml:radio label="No" value="no"></cml:radio>
+  <cml:radio label="Partially" value="partially"></cml:radio>
+  <cml:radio label="No opinion" value="noopinion"></cml:radio>
+</cml:radios>
+
+<p></p>
+<h3 class="html-element-wrapper">
+  <span style="color: rgb(0, 0, 0);">
+    <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+        Which of the following characteristics are present in this comment? Select all that apply.
+      </span>
+  </span>
+</h3>
+  
+<cml:checkboxes validates="required" label="Constructive" name="constructive_characteristics" gold="true">
+  <cml:checkbox label="The comment offers a solution to the issue(s) or problem(s) discussed in the article." value="solution"></cml:checkbox>
+  <cml:checkbox label="The comment targets specific points from the article." value="specific_points"></cml:checkbox>
+  <cml:checkbox label="The comment supports points made by providing appropriate evidence." value="evidence"></cml:checkbox>
+  <cml:checkbox label="The comment contains a personal story or experience." value="personal_story"></cml:checkbox>
+  <cml:checkbox label="The comment contributes something valuable to the conversation." value="dialogue"></cml:checkbox>
+  <cml:checkbox label="The comment does not have any constructive characteristics." value="no_con"></cml:checkbox> 
+  <cml:checkbox label="The comment has other constructive characteristics." value="con_other"></cml:checkbox>
+</cml:checkboxes>
+<cml:text label="List all other constructive characteristics." name="other_con_chars" validates="required" only-if="constructive_characteristics:[6]" gold="true"></cml:text>
+  
+<cml:checkboxes validates="required" label="Non-constructive" name="non_constructive_characteristics" gold="true">
+  <cml:checkbox label="The comment is not relevant to the article." value="non_relevant"></cml:checkbox> 
+  <cml:checkbox label="The commenter does not respect views and beliefs different from their own." value="no_respect"></cml:checkbox>
+  <cml:checkbox label="The comment is unsubstantial." value="unsubstantial"></cml:checkbox>
+  <cml:checkbox label="The comment is sarcastic." value="sarcastic"></cml:checkbox> 
+  <cml:checkbox label="The comment is provocative." value="provocative"></cml:checkbox>
+  <cml:checkbox label="The comment does not have any non-constructive characteristics." value="no_non_con"></cml:checkbox> 
+  <cml:checkbox label="The comment has other non-constructive characteristics." value="noncon_other"></cml:checkbox>
+</cml:checkboxes>
+<cml:text label="List all other non_constructive characteristics." name="other_noncon_chars" validates="required" only-if="non_constructive_characteristics:[6]" gold="true"></cml:text>
+
+<cml:radios label="Overall, would you consider this comment as a constructive comment?" validates="required" name="constructive" gold="true" aggregation="agg">
+  <cml:radio label="Yes" value="yes"></cml:radio>
+  <cml:radio label="No" value="no"></cml:radio>
+  <cml:radio label="Not sure" value="not_sure"></cml:radio>
+</cml:radios>
+
+<hr />
+
+
+<cml:textarea label="Your comments" name="crowd_comments" aggregation="all"></cml:textarea>
+

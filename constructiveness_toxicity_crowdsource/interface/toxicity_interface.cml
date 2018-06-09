@@ -1,0 +1,102 @@
+<div class="html-element-wrapper">
+
+  <h2 class="html-element-wrapper">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+        <u>Headline</u>
+      </span>
+    </span>
+  </h2>
+  
+  <p class="html-element-wrapper">
+    <span style="background-color: rgb(0, 255, 255);">
+      <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">{{article_title}}</span>
+    </span>
+  </p>
+  
+  <p>
+    <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">by {{article_author}} on {{article_published_date}}</span>
+  </p>
+  
+  <div class="collapse-container">       
+    <div class="collapse-group">    
+      <a target="_blank" data-toggle="collapse" data-target=" .collapse-one" class="collapse-header text-center definition">
+        <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+          <u>Article Text (Click to expand or collapse.) </u>
+        </span>
+      </a>
+      
+      <div class="expand collapse-one collapse-body text-left">   
+        <p class="html-element-wrapper">
+          <span style="font-family: Open Sans; font-size: 22px; font-style: normal; font-weight:500; font-height: 20px">{{article_text}}</span>         
+        </p>
+      </div>  
+    </div>
+  </div>
+  
+  <p></p>
+  <h2 class="html-element-wrapper">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+        <u>Now read the following comment posted on this article.</u>
+      </span>
+    </span>
+  </h2>
+  
+  <p style="border:3px; border-style:solid; border-color:rgb(64,224,208); padding: 1em;">
+    <span style="color: rgb(0, 0, 0);">
+      <span style="font-family: Open Sans; font-size: 20px; font-style: normal; font-weight:500; font-height: 20px">{{comment_text}}</span>
+    </span>
+  </p>
+  
+</div>
+
+<h2 class="html-element-wrapper">
+  <span style="color: rgb(0, 0, 0);">
+    <span style="font-family: Open Sans; font-size: 24px; font-style: normal; font-weight:500; font-height: 20px">
+      <u>Please answer all of the following questions.</u>
+    </span>
+    <s></s>
+  </span>
+</h2>
+
+<cml:radios label="Do you agree with the commenter's views?" validates="required" name="agree" gold="true" aggregation="agg">
+  <cml:radio label="Yes" value="yes"></cml:radio>
+  <cml:radio label="No" value="no"></cml:radio>
+  <cml:radio label="Partially" value="partially"></cml:radio>
+  <cml:radio label="No opinion" value="noopinion"></cml:radio>
+</cml:radios>
+
+
+<cml:checkboxes validates="required" label="Which of the following toxic characteristics are present in the comment?" name="toxicity_characteristics" gold="true">
+  <cml:checkbox label="The comment contains harsh, abusive or offensive language." value="abusive"></cml:checkbox>
+  <cml:checkbox label="The comment contains a personal attack, insult or condemnation." value="personal_attack"></cml:checkbox>
+  <cml:checkbox label="The comment is inflammatory." value="inflammatory">
+  </cml:checkbox>
+  <cml:checkbox label="The comment ridicules, teases, or pokes others." value="teasing"></cml:checkbox>
+  <cml:checkbox label="The comment causes embarrassment or disrespect." value="embarrassment"></cml:checkbox>
+  <cml:checkbox label="The comment does not have any toxic characteristics." value="no_toxic"></cml:checkbox> 
+  <cml:checkbox label="The comment has other toxic characteristics." value="toxic_other"></cml:checkbox>
+</cml:checkboxes>
+<cml:text label="List all other toxic characteristics." name="other_toxic_chars" validates="required" only-if="toxicity_characteristics:[6]" gold="true"></cml:text>
+
+<hr />
+
+
+<cml:ratings label="How will you rate the toxicity of the comment?" points="4" to="Very Toxic" from="Not Toxic" validates="required" name="crowd_toxicity_level" aggregation="all" gold="true">
+</cml:ratings>
+
+<cml:radios label="Does the comment contribute something to the conversation even if it has some toxicity in it?" validates="required" name="expert_has_content" only-if="crowd_toxicity_level:[1]||crowd_toxicity_level:[2]||crowd_toxicity_level:[3]" gold="true" aggregation="agg">
+  <cml:radio label="Yes" value="yes"></cml:radio>
+  <cml:radio label="No" value="no"></cml:radio>
+  <cml:radio label="Not sure" value="not_sure"></cml:radio>
+</cml:radios>
+
+<cml:radios label="If you were a comment moderator, would you keep or discard this comment?" validates="required" name="crowd_discard" only-if="crowd_toxicity_level:[2]||crowd_toxicity_level:[3]" gold="true" aggregation="agg">
+  <cml:radio label="Keep" value="keep"></cml:radio>
+  <cml:radio label="Discard" value="discard"></cml:radio>
+  <cml:radio label="Not sure" value="not_sure"></cml:radio>
+</cml:radios>
+
+<cml:textarea label="Your comments" name="crowd_comments" aggregation="all"></cml:textarea>
+

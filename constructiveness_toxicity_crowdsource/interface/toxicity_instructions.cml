@@ -1,0 +1,111 @@
+<h1><strong><span style="color: rgb(184, 49, 47);">Overview</span></strong></h1>
+
+<p>In this job, you will be presented with headlines and opinion articles from the Canadian newspaper The Globe and Mail and real comments that people posted in response to these articles.&nbsp;</p>
+
+<p>Your job is to&nbsp;</p>
+
+<ol>
+	<li>read the opinion article;&nbsp;</li>
+	<li>read the corresponding comment; and&nbsp;</li>
+	<li>answer the presented questions related to the <strong>toxicity</strong> of these comments using your intuitions and the guidelines provided below.&nbsp;</li>
+</ol>
+
+<p>If you are curious, we are interested in building computational systems to organize news comments in a meaningful way and your annotations will be used in building and evaluating such systems.&nbsp;</p>
+
+<h1><span style="color: rgb(184, 49, 47);">Guidelines</span></h1>
+
+<p><em>Toxic</em> comments are intended to cause harm. We ask you to rate toxicity on a 4-point-scale. Below we are providing some characteristics and examples of four levels of toxicity: very toxic, toxic, mildly toxic, and non-toxic comments. Note that these are just guidelines and not hard definitions. &nbsp;</p>
+
+<table>
+	<tbody>
+		<tr>
+			<td>
+
+				<h1><span style="color: rgb(0, 0, 0);"><u>Toxicity level</u></span></h1>
+			</td>
+			<td>
+
+				<h1><span style="color: rgb(0, 0, 0);"><u>Examples</u></span></h1>
+			</td>
+		</tr>
+		<tr>
+			<td style="width: 58.6369%;">
+
+				<h1><span style="color: rgb(209, 72, 65);">Very toxic (scale point =4)</span></h1>
+
+				<ul>
+					<li>Comments which use <strong>harsh</strong>, <strong>offensive</strong>, or <strong>abusive language&nbsp;</strong></li>
+					<li>Comments which include <strong>personal attacks</strong>, <strong>insults</strong>, <strong>condemnation</strong></li>
+					<li>Comments which<strong>&nbsp;intend to cause harm&nbsp;</strong>and<strong>&nbsp;</strong>which will likely <strong>make someone leave the conversation</strong>
+						<br>
+						<br>
+					</li>
+				</ul>
+			</td>
+			<td style="width: 41.2456%; vertical-align: top;"><span style="color: rgb(0, 0, 0);"><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>Please stop whining. Trump is a misogynist, racist buffoon and perhaps worse. Clinton is ethically challenged and craven in what she will tolerate in her lust for power. Neither of them is a stellar representative of their gender. Next time, put up a female candidate who outshines the male, not one who has sunk to his same level. Simple.</span></span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+
+				<h1><span style="color: rgb(243, 121, 52);">Toxic (scale point = 3)</span></h1>
+
+				<ul>
+					<li>Comments which include <strong>ridiculing</strong> or <strong>teasing others</strong></li>
+					<li>Comments which cause <strong>embarrassment</strong> and <strong>disrespect</strong></li>
+					<li>Comments which include <strong>disagreeing aggressively</strong> or <strong>joking inappropriately</strong></li>
+				</ul>
+				<br>
+			</td>
+			<td style="vertical-align: top;">
+				<br>
+				<br><span style="color: rgb(0, 0, 0);"><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>Why don't the NDP also promise 40 acres and a mule? They will never lead this country. Panderers to socialists and unionists.</span></span>
+			</td>
+		</tr>
+		<tr>
+			<td>
+
+				<h1><span style="color: rgb(250, 197, 28);">Mildly toxic (scale point = 2)</span></h1>
+
+				<ul>
+					<li>Comments which might be considered as toxic by some people or in some contexts</li>
+					<li>Comments which <strong>express frustration and anger</strong></li>
+				</ul>
+				<br>
+			</td>
+			<td style="vertical-align: top;"><span style="color: rgb(0, 0, 0);"><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>Is this a joke? Marie Henein as feminist crusader, advising us what to tell our daughters?? no thanks</span></span>
+			</td>
+		</tr>
+		<tr>
+			<td style="width: 58.6369%;">
+
+				<h1><span style="color: rgb(97, 189, 109);">Not toxic (scale point = 1)</span></h1>
+
+				<ul>
+					<li>Comments which do not exhibit any toxicity</li>
+				</ul>
+			</td>
+			<td style="width: 41.2456%; vertical-align: top;">
+				<br><span style="color: rgb(0, 0, 0);"><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>In my opinion, criticizing the new generation is not going to solve any problem. If you want to produce children, you should be prepared to pay for their care. &nbsp;</span></span>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h3>
+	<br>
+</h3>
+
+<h2 style="text-align: center;"><span style="color: rgb(85, 57, 130);"><strong>Note that&nbsp;</strong><strong>&nbsp;a negative comment <strong>or a comment that you disagree with does not necessarily mean it is toxic.</strong></strong></span></h2>
+
+<h1><span style="color: rgb(184, 49, 47);">Steps</span></h1>
+
+<ol>
+	<li>If you haven't already, read the article. You may collapse or expand the &nbsp;article as necessary by clicking on the link. &nbsp;</li>
+	<li>Read the comment carefully.&nbsp;</li>
+	<li>Answer all the questions on the presented comment.&nbsp;</li>
+	<li>If you have any feedback on the task or the definitions, please write them in <em>Your comments</em> text box.&nbsp;</li>
+</ol>
+
+<p><strong style="color: rgb(52, 73, 94); background-color: initial; text-align: initial; font-size: 16px;">Thank you for your help with this project!!</strong></p>
+
