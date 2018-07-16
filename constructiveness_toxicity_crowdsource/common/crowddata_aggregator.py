@@ -32,7 +32,7 @@ class CrowdsourceAggregator:
         other_cols = unit_id_col + meta_cols + nominal_cols + text_cols
         df = df[other_cols].join(attrs)
         
-        # agreegation method for each class of attributes
+        # aggregation method for each class of attributes
         avg_dict = {k: 'mean' for k in avg_cols}
         meta_dict = {k: 'first' for k in meta_cols}
         nominal_dict = {k: common_aggregation_functions.list_and_sort for k in nominal_cols}
