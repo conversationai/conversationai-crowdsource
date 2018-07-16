@@ -60,7 +60,7 @@ def concatenate(vals):
         else:
             L.append(str(val))
 
-    return "\n".join(L)
+    return '\n'.join(L)
 
 if __name__=='__main__':
     print('list_and_sort aggregation exmaple: ')
