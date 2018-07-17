@@ -14,13 +14,12 @@ def get_arguments():
     parser.add_argument('--articles_csv', '-a', type=str, dest='articles_csv', action='store',
                         default= SOCC_PATH + r'gnm_articles.csv',
                         help="The articles CSV")
-
-    parser.add_argument('--top_level_comments_csv', '-tlc', type=str, dest='tlc_csv', action='store',
-                        default = TEMP_DATA_PATH + r'gnm_comments_top_level.csv',
-                        help="The top-level comments csv")
+    parser.add_argument('--comments_csv', '-c', type=str, dest='comments_csv', action='store',
+                        default = SOCC_PATH + r'gnm_comments.csv',
+                        help="The comments csv")
 
     parser.add_argument('--output_csv', '-o', type=str, dest='output_csv', action='store',
-                        default=r'../output/gnm_comments_large_scale_annotation.csv',
+                        default=r'../output/gnm_comments_large_scale_annotation1.csv',
                         help="The top-level comments csv")
 
     parser.add_argument('--narticles', '-na', type=int, dest='narticles', action='store',
@@ -34,60 +33,66 @@ def get_arguments():
     args = parser.parse_args()
     return args
 
-def choose_comments(articles_csv, tlc_csv, narticles, ncomments, output_csv):
+def choose_comments(articles_csv, comments_csv, narticles, ncomments, output_csv):
     '''
-    :param articles_csv: The CSV containing article information
-    :param tlc_csv: The CSV containing top-level comments
-    :param narticles: The number of articles to be selected
-    :param ncomments: The number of comments to be selected
-    :param output_csv: The output file for annotation
+    :param articles_csv: (string) The path to the CSV file containing article information
+    :param comments_csv: (string) The path to the CSV file containing comments information
+    :param narticles: (integer) The number of articles to be selected
+    :param ncomments: (integer) The number of comments to be selected
+    :param output_csv: (string) The path to the CSV file to write the chosen comments
     :return: None
+    
     Description: This function chooses ncomments from narticles and writes these comments
     along with article information in output_csv.
     '''
 
-    # Read first narticles articles in dataframe adf
-    adf = pd.read_csv(articles_csv, nrows = narticles)
+    # Read first narticles articles in dataframe article_df
+    article_df = pd.read_csv(articles_csv, nrows = narticles)
 
     # Get probability distribution of number of comments per article
-    total_comments = adf['ntop_level_comments'].sum()
-    adf['prob'] = adf['ntop_level_comments']/total_comments
+    total_comments = article_df['ntop_level_comments'].sum()
+    article_df['prob'] = article_df['ntop_level_comments']/total_comments
 
     # Choose ncomments weighted by the probability distribution above
-    ncomments_per_article = np.random.choice(adf['article_id'].tolist(), size=ncomments, p=adf['prob'].tolist())
+    ncomments_per_article = np.random.choice(article_df['article_id'].tolist(), size=ncomments, p=article_df['prob'].tolist())
 
     # Count the number of comments to be chosen per article
     c = Counter()
-    for aid in ncomments_per_article:
-        c[aid] += 1
+    for article_id in ncomments_per_article:
+        c[article_id] += 1
 
+    # Get only top-level comments 
+    comments_df = pd.read_csv(comments_csv)
+    top_level_comments_df = comments_df[comments_df['comment_counter'].str.count('_') == 2]
+    
     # Choose number of comments per article as prompted by counter c and create a result dataframe
-    tlcdf = pd.read_csv(tlc_csv)
     frames = []
-    # the counter object c tells us how many comments to pick from each article.
-    for (aid, ncomm) in c.items():
-        subset_df = tlcdf[tlcdf['article_id'] == aid]
+    
+    for (article_id, ncomm) in c.items():
+        subset_df = top_level_comments_df[top_level_comments_df['article_id'] == article_id]
         frames.append(subset_df.sample(ncomm))
 
-    result = pd.concat(frames)
-
+    chosen_comments_df = pd.concat(frames)
+    chosen_comments_df.rename(columns={'author': 'comment_author'}, inplace=True)
+    
     # Get article information from the article dataframe
-    result['article_title'] = result.article_id.map(adf.set_index('article_id')['title'])
-    result['article_url'] = result.article_id.map(adf.set_index('article_id')['article_url'])
-    result['article_text'] = result.article_id.map(adf.set_index('article_id')['article_text'])
-    result['article_author'] = result.article_id.map(adf.set_index('article_id')['author'])
-    result['article_published_date'] = result.article_id.map(adf.set_index('article_id')['published_date'])
-    result['_golden'] = False
-    result.rename(columns={'author': 'comment_author'}, inplace=True)
+    result_df = chosen_comments_df.join(article_df.set_index('article_id'), on='article_id', sort=True)
+    result_df['_golden'] = False
+    
+    # Rename some of the columns in the 
+    result_df.rename(columns={'title': 'article_title'}, inplace=True)
+    result_df.rename(columns={'author': 'article_author'}, inplace=True)
+    result_df.rename(columns={'published_date': 'article_published_date'}, inplace=True)
 
     # Define the columns to be written and write the output csv
     cols = (['article_id', 'article_title', 'article_url', 'article_author', 'article_published_date', 'article_text',
              'comment_counter', 'comment_author', '_golden', 'comment_text'])
-    result.to_csv(output_csv, columns = cols, index = False)
+    result_df.to_csv(output_csv, columns = cols, index = False)
+    print('The output CSV written: ', output_csv)
 
 
 if __name__ == "__main__":
     args = get_arguments()
     print(args)
-    choose_comments(args.articles_csv, args.tlc_csv, args.narticles, args.ncomments, args.output_csv)
+    choose_comments(args.articles_csv, args.comments_csv, args.narticles, args.ncomments, args.output_csv)
 
