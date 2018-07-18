@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 
 # create and save plots
-def create_plot(size, labels, colors, title = 'Test', dpi = 300):
+def plot_donut_chart(size, labels, colors, title = 'Test', dpi = 300):
     '''    
     :param size: (list of floats) Sizes for each slice in the donut plot 
     :param labels: (list of strs) Labels for each slice in the donut plot
