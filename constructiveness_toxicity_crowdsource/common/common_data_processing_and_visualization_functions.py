@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 # create and save plots
 def plot_donut_chart(size, labels, colors, title = 'Test', dpi = 300):
@@ -49,7 +50,7 @@ def nominalize_constructiveness(constructiveness_score):
             return 'not_sure'
     except:
         print("Error in the input: ", constructiveness_score)
-        return np.nan    
+        return np.nan
     
 def nominalize_toxicity(toxicity_value):
     '''
@@ -67,4 +68,5 @@ def nominalize_toxicity(toxicity_value):
             return 'Not toxic'
     except:
         print("Error in the input: ", toxicity_value)
-        return np.nan            
+        return np.nan
+    
