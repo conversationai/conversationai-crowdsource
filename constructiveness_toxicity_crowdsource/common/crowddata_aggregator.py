@@ -5,7 +5,9 @@ import common_aggregation_functions
 from common_aggregation_functions import *
 
 class CrowdsourceAggregator:
-    
+    '''
+    Aggregator for crowdsourced data for constructiveness and toxicity
+    '''
     def __init__(self, input_csv):
         self.df = pd.read_csv(input_csv)
         
@@ -27,7 +29,8 @@ class CrowdsourceAggregator:
         text_cols = attribs['text_cols']
         
         # Replace text values with numerical values in the dataframe
-        attrs = self.df[avg_cols].replace(['yes', 'no', 'partially', 'not_sure', 'noopinion'], [1, 0, 0.5, 0.5, np.nan])
+        #attrs = self.df[avg_cols].replace(['yes', 'no', 'partially', 'not_sure', 'noopinion'], [1, 0, 0.5, 0.5, np.nan])
+        attrs = self.df[avg_cols].replace(['yes', 'no', 'partially', 'not_sure', 'noopinion'], [1, 0, 0.5, 0.5, 0.5])
         
         other_cols = unit_id_col + meta_cols + nominal_cols + text_cols
         df = df[other_cols].join(attrs)
