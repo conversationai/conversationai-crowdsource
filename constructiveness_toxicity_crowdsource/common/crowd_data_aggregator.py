@@ -1,8 +1,7 @@
 import pandas as pd
 import numpy as np
 import math
-import common_aggregation_functions
-from common_aggregation_functions import *
+from crowd_data_aggregation_functions import *
 
 class CrowdsourceAggregator:
     '''
@@ -38,8 +37,8 @@ class CrowdsourceAggregator:
         # aggregation method for each class of attributes
         avg_dict = {k: 'mean' for k in avg_cols}
         meta_dict = {k: 'first' for k in meta_cols}
-        nominal_dict = {k: common_aggregation_functions.list_and_sort for k in nominal_cols}
-        text_dict = {k: common_aggregation_functions.concatenate for k in text_cols}
+        nominal_dict = {k: list_and_sort for k in nominal_cols}
+        text_dict = {k: concatenate for k in text_cols}
         
         agg_dict = {**avg_dict, **meta_dict, **nominal_dict, **text_dict}
         
