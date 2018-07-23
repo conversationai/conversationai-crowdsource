@@ -81,5 +81,22 @@ def binarize_constructiveness(constructiveness_score):
     CONSTRUCTIVENESS_SCORE_THRESHOLD, it is considered as a constructive comment 
     else it is considered as a non-constructive comment. 
     '''
-    return 'yes' if constructiveness_score >= CONSTRUCTIVENESS_SCORE_THRESHOLD else 'no'
+    return 'yes' if float(constructiveness_score) >= CONSTRUCTIVENESS_SCORE_THRESHOLD else 'no'
+
+
+def discard_ambiguous_rows(df, column_name, ambiguous_values = ['not_sure']):    
+    '''
+    :constructive: (pandas.DataFrame) the dataframe containing crowd annotations  
+    :column_name: (str) the column name with possible ambiguous values
+    :ambiguous_value: (list) the list of ambiguous values to be discarded
+    :return: (pandas.DataFrame) the dataframe with discarded ambiguous values
+    
+    Given the dataframe df containing full crowd annotations, the column_name, and the ambiguous_value,
+    this function discards the rows containing ambiguous value in the given column and returns the new
+    dataframe. 
+    
+    '''
+    df_subset = df[~df[column_name].isin(ambiguous_values)].copy()
+    return df_subset
+    
 
