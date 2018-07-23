@@ -133,9 +133,9 @@ def calculate_inter_annotator_agreement(df, question_column, golden=False):
     
     missing = '*' # indicator for missing values
     
-    krippendorff_alpha = krippendorff_alpha(reliability_data, metric = nominal_metric, missing_items=missing)
-    print("Krippendorff's alpha with nominal metric: %.3f" % krippendorff_alpha)
-    retirm krippendorff_alpha
+    k_alpha = krippendorff_alpha(reliability_data, metric = nominal_metric, missing_items=missing)
+    print("Krippendorff's alpha with nominal metric: %.3f" % k_alpha)
+    return k_alpha
 
             
 def secret_gold_evaluation_constructiveness(df):
