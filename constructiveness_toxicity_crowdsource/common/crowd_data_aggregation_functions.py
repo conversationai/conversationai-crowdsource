@@ -31,9 +31,7 @@ def list_and_sort(vals):
         val = val.strip()
         cnt[val] += 1
         L = cnt.most_common()
-        #print('L:', L)
         L1 = [key + ':' + str(freq) for (key, freq) in L] 
-        #L = sorted(cnt, key=cnt.get, reverse=True)
     return '\n'.join(L1)
 
 def concatenate(vals):
@@ -48,8 +46,10 @@ def concatenate(vals):
     
     Examples: 
     >>> concatenate([float('nan'), 'yes', 'no', float('nan'), 'yes'])
+    
     yes
     no
+    
     yes
     '''    
     
