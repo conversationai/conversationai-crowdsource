@@ -175,7 +175,6 @@ def secret_gold_evaluation_toxicity(df):
     toxicity_disagreement_df = (internal_gold_tox_df[internal_gold_tox_df['crowd_toxicity_level_internal_gold_binary'] != 
                                                     internal_gold_tox_df['crowd_toxicity_level_binary']])
     
-    #show_comments(toxicity_disagreement_df, ['crowd_toxicity_level_internal_gold_binary', 'crowd_toxicity_level_binary'] )    
     return round(toxicity_disagreement_df.shape[0] * percentage_multiplier, 2)
 
 if __name__ == "__main__":    
