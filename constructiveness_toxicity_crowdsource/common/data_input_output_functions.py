@@ -23,11 +23,10 @@ def get_full_annotation_csv(data_path, batch):
     
     input_csv_files = [f for f in glob.glob(data_path + 'batch' + str(batch) + '_f*.csv') 
                                                if ntpath.basename(f).count('_') == 1]
-    try: 
-        return input_csv_files[0]
-    except: 
-        print('Exception: Please review your input dir. Full annotation file not found under the following dir: \n', data_path)
-        sys.exit(0)
+    # We need exactly one input file in the input_csv_files.
+    # Fail if there are more or less files in the list.     
+    assert len(input_csv_files) == 1
+    return input_csv_files[0]
 
 if __name__ == "__main__":
     batch = 8
