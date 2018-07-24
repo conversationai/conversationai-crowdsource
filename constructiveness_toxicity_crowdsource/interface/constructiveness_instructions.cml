@@ -1,0 +1,121 @@
+<h1><strong><span style="color: rgb(184, 49, 47);">Overview</span></strong></h1>
+
+<p>In this job, you will be presented with headlines and opinion articles from the Canadian newspaper &nbsp;The Globe and Mail, and real comments that people posted in response to these articles.&nbsp;</p>
+
+<p>Your job is to&nbsp;</p>
+
+<ol>
+	<li>read the opinion article;&nbsp;</li>
+	<li>read the corresponding comment; and&nbsp;</li>
+	<li>answer the presented questions related to <strong>constructiveness</strong>&nbsp; of these comments using your intuitions and the guidelines provided below.&nbsp;</li>
+</ol>
+
+<p>If you are curious, we are interested in building computational systems to organize news comments in a meaningful way and your annotations will be used in building and evaluating such systems.&nbsp;</p>
+
+<h1><span style="color: rgb(184, 49, 47);">Guidelines</span></h1>
+
+<p>A <em>constructive</em> comment is one which exchanges intelligent and informed remarks that are relevant to the article. Below we point out some characteristics of constructive and non-constructive comments.&nbsp;</p>
+
+<table>
+	<tbody>
+		<tr>
+			<td style="width: 62.08%;">
+
+				<h1><span style="color: rgb(0, 0, 0);"><u>Comment type</u></span></h1>
+			</td>
+			<td style="width: 37.8026%;">
+
+				<h1><span style="color: rgb(0, 0, 0);"><u>Examples</u></span></h1>
+			</td>
+		</tr>
+		<tr>
+			<td style="width: 62.08%; vertical-align: top;">
+
+				<h1><u><span style="color: rgb(65, 168, 95);">Constructive comments</span>&nbsp;</u></h1>
+
+				<ul>
+					<li>
+
+						<h4><span style="color: rgb(65, 168, 95);">offer a &nbsp;<strong>solution to the issue(s) or problem(s) discussed in the article&nbsp;</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(65, 168, 95);">target <strong>specific</strong> points</span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(65, 168, 95);"><strong>support the points &nbsp;by providing appropriate evidence</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(65, 168, 95);"><strong>share personal&nbsp;stories or experiences relevant to the article</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><strong>contributes something valuable to the conversation <span style="caret-color: rgb(65, 168, 95);">and</span> encourages other readers to participate actively in the discussion</strong></h4>
+					</li>
+				</ul>
+			</td>
+			<td style="width: 37.8026%; vertical-align: top;">
+				<br><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; background-color: rgb(255, 255, 208); font-size: 16px;'>While I support the notion of subsidized daycare, a national daycare program is an expensive boondoggle waiting to happen. A means tested subsidy paid directly to parents who use qualified facilities would create opportunities to increase available spaces. I would support a subsidy using the following guidelines: First, no family with income over $100,000 per year should require a subsidy. Subsidies could be scaled according to income levels from 25% to 75%. Second, people should expect to pay at least $10/day ($200/month) at any income level. Third, facilities that qualify for subsidies should be required to offer a minimum standard of service.</span></td>
+		</tr>
+		<tr>
+			<td style="width: 62.08%;">
+
+				<h1><span style="color: rgb(226, 80, 65);">Non-constructive comments</span></h1>
+
+				<ul>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);">are <strong>not relevant</strong> to the article<strong>&nbsp;</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);"><strong>do not respect views and beliefs different from their own</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);">are <strong>unsubstantial</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);">are <strong>sarcastic&nbsp;</strong></span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);"><strong>are&nbsp;</strong>provocative&nbsp;</span></h4>
+					</li>
+					<li>
+
+						<h4><span style="color: rgb(209, 72, 65);">are <strong>excessively flattering</strong> or <strong>demeaning</strong></span><span style="color: rgb(184, 49, 47);">&nbsp;</span></h4>
+					</li>
+				</ul>
+			</td>
+			<td style="width: 37.8026%;"><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>Excellent!! Maggie, I think you are the only sane person in the world!&nbsp;</span>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br>
+				<br><span style='font-family: "Open Sans"; font-style: normal; font-weight: 500; font-size: 16px;background-color: rgb(255, 255, 208);'>Yawwwn.....Such a boring article!!</span></td>
+		</tr>
+	</tbody>
+</table>
+
+<h2 style="text-align: center;"><span style="color: rgb(85, 57, 130);"><strong>A positive comment does not necessarily mean it is constructive.&nbsp;</strong></span></h2>
+
+<h2 style="text-align: center;"><span style="color: rgb(85, 57, 130);"><strong>Some comments might have characteristics of both constructive and &nbsp;non-constructive comments. &nbsp;</strong><br><strong>Use your judgement to decide which characteristics weigh more in such cases.</strong></span></h2>
+
+<h1 style="text-align: center;"><span style="color: rgb(41, 105, 176);"><br></span></h1>
+
+<h1><span style="color: rgb(184, 49, 47);">Steps</span></h1>
+
+<ol>
+	<li>If you haven't already, read the article. You may collapse or expand &nbsp;the article as necessary by clicking on the link. &nbsp;</li>
+	<li>Read the comment carefully.&nbsp;</li>
+	<li>Answer all the questions on the presented comment.&nbsp;</li>
+	<li>If you have any feedback on the task or the definitions, please write them in <em>Your comments</em> text box.&nbsp;</li>
+</ol>
+
+<p><strong style="color: rgb(52, 73, 94); background-color: initial; text-align: initial; font-size: 16px;">Thank you for your help with this project!!</strong></p>
+
