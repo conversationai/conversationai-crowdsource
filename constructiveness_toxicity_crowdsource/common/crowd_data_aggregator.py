@@ -17,7 +17,7 @@ class CrowdsourceAggregator:
         return self.df.query('_golden == False')
             
     def get_nannotators(self):
-        return len(self.non_gold_df['_worker_id'].unique())
+        return len(self.get_non_gold_questions()['_worker_id'].unique())
         
     def aggregate_annotations(self, df, attribs):
         # Relevant columns 
@@ -55,9 +55,6 @@ class CrowdsourceAggregator:
         print('CSV written: ', csv_path)
         
 if __name__=='__main__':
-    pass
-
-
-
-
-        
+    ca = CrowdsourceAggregator('../CF_output/constructiveness/batch8/batch8_f1285429.csv')
+    print('The number of annotators: ', ca.get_nannotators())
+    
