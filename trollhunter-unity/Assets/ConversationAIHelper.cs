@@ -21,7 +21,7 @@ public class ConversationAIHelper {
 	private Score getDummyScore(string text) {
 		Score score = new Score();
 		score.Toxicity = 1.0F / (float) text.Length;
-		score.SevereToxicity = score.toxicity / 2.0F;
+		score.SevereToxicity = score.Toxicity / 2.0F;
 		score.Inflammatory = (float) random.NextDouble();
 
 		return score;
