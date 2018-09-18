@@ -11,7 +11,7 @@ public class ConversationAIHelper {
 	}
 
 	// Query the ConversationAI.
-	public bool query(string text, Callback callback) {
+	public bool Query(string text, Callback callback) {
 		// Stub
 		Score score = getDummyScore(text);
 		callback.score(score);
