@@ -11,7 +11,7 @@ public class ConversationAIHelper {
 	}
 
 	// Query the ConversationAI.
-	public bool query(string text, Callback callback) {
+	public bool Query(string text, Callback callback) {
 		// Stub
 		Score score = getDummyScore(text);
 		callback.score(score);
@@ -20,9 +20,9 @@ public class ConversationAIHelper {
 
 	private Score getDummyScore(string text) {
 		Score score = new Score();
-		score.toxicity = 1.0F / (float) text.Length;
-		score.severeToxicity = score.toxicity / 2.0F;
-		score.inflammatory = (float) random.NextDouble();
+		score.Toxicity = 1.0F / (float) text.Length;
+		score.SevereToxicity = score.toxicity / 2.0F;
+		score.Inflammatory = (float) random.NextDouble();
 
 		return score;
 	}

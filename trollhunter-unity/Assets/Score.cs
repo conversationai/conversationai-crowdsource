@@ -4,7 +4,7 @@ using UnityEngine;
 
 // Stores toxicity scores returned from Conversation AI.
 public class Score {
-	public float toxicity;
-	public float severeToxicity;
-	public float inflammatory;
+	public float Toxicity;
+	public float SevereToxicity;
+	public float Inflammatory;
 }
