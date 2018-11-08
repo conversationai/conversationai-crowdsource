@@ -13,7 +13,7 @@ interface IdentityBool {
 }
 
 @Component({
-  selector: 'identity-job',
+  selector: 'app-identity-job',
   templateUrl: './identity_job.component.html',
   styleUrls: ['./identity_job.component.css'],
   host: { '(window:keydown)': 'handleKeyDown($event)' },
@@ -40,11 +40,11 @@ export class IdentityJobComponent extends BaseJobComponent {
     'white'
   ];
 
-  booleanLabels : {[key: string]: IdentityBool } = {};
+  booleanLabels: {[key: string]: IdentityBool } = {};
 
   public buildAnswer(): IdentityJobCrowdSourceAnswer {
     const selectedIdentities = [];
-    for (let identity in this.booleanLabels) {
+    for (const identity in this.booleanLabels) {
       if (this.booleanLabels[identity].markedAsCategory) {
         selectedIdentities.push(identity);
       }
@@ -56,7 +56,7 @@ export class IdentityJobComponent extends BaseJobComponent {
 
   resetQuestionUI(): void {
     this.booleanLabels = {};
-    for (let identity of this.identities) {
+    for (const identity of this.identities) {
       this.booleanLabels[identity] = {
         category: identity,
         markedAsCategory: false

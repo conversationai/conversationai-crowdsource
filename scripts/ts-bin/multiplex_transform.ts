@@ -37,7 +37,7 @@ export class Multiplex extends stream.Transform {
   public outputStreams : { [streamName:string] : stream.Writable } = {};
   public finishedPromises : { [streamName:string] : Promise<void> } = {};
   public fullStreams : { [streamName:string] : null } = {};
-  private transformCb : ((error:Error|null) => void)[] = [];
+  private transformCb : ((error:Error|undefined) => void)[] = [];
   private completeCloseFn ?: () => void;
   private inputProcessor : ChunkFn = (chunk:string, encoding:string) => { return {}; };
   // defined only when closing.
@@ -71,7 +71,7 @@ export class Multiplex extends stream.Transform {
     console.debug('checkResume');
     if (this.transformCb !== undefined && Object.keys(this.fullStreams).length === 0) {
       for(let cb of this.transformCb) {
-        cb(null);
+        cb(undefined);
       }
       this.transformCb = [];
       console.debug('resumed.');
@@ -104,10 +104,10 @@ export class Multiplex extends stream.Transform {
     }
   }
 
-  _transform(chunk:string, encoding:string, cb:(error:Error|null) => void) : void {
+  _transform(chunk:string, encoding:string, cb:stream.TransformCallback) : void {
     this.inputProcessor(chunk, encoding, this.pushToQueue.bind(this));
     if (Object.keys(this.fullStreams).length === 0) {
-      cb(null);
+      cb(undefined);
     } else {
       console.debug('full: adding transformCb');
       // Otherwise a drain event will be used to call transformCb.

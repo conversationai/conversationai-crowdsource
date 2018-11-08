@@ -66,7 +66,7 @@ interface AnswerT2 {
 
 async function main(args : Params) {
     let instream = fs.createReadStream(args.infile);
-    let outstream = fs.createWriteStream(args.outfile, {flags: 'w', encoding: 'utf-8'});
+    let outstream = fs.createWriteStream(args.outfile, {flags: 'w', defaultEncoding: 'utf-8'});
     let rl = readline.createInterface(instream, outstream);
 
     let lineCount = 0;

@@ -70,6 +70,8 @@ Now create a spanner database in the `crowdsource` instance, and the schema for
 the tables to hold data for this app:
 
 ```
+export GOOGLE_APPLICATION_CREDENTIALS="tmp/path-to-keyfile.json"
+
 ts-node src/setup/create_db.ts
 ```
 

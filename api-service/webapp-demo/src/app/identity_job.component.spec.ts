@@ -17,7 +17,7 @@ import { ActivatedRouteStub, setupQuestionMocks } from './test_util';
 // Test component wrapper for BaseJobComponent.
 @Component({
   selector: 'base-job-test',
-  template: `<identity-job [identities]="testIdentities"></identity-job>`
+  template: `<app-identity-job [identities]="testIdentities"></app-identity-job>`
 })
 class IdentityJobTestComponent {
   @ViewChild(IdentityJobComponent)
