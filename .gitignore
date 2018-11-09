@@ -90,3 +90,8 @@ obj/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# ============ #
+# === api ==== #
+# ============ #
+trollhunter-api/core/TrollHunterApi/bin/Debug/
