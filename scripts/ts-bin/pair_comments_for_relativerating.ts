@@ -98,19 +98,19 @@ let args = yargs
         describe: 'Input path to JSON-lines file of answers with questions'
     })
     .option('left_id_prefix', {
-      default: 'id_a',
+      default: 'a.p.id_a',
       describe: 'Prefix string for the id property of the left example'
     })
     .option('right_id_prefix', {
-      default: 'id_b',
+      default: 'a.p.id_b',
       describe: 'Prefix string for the id property of the right example'
     })
     .option('left_text_prefix', {
-      default: 'comment_a',
+      default: 'i.comment_a',
       describe: 'Prefix string for the comment text property of the left example'
     })
     .option('right_text_prefix', {
-      default: 'comment_b',
+      default: 'i.comment_b',
       describe: 'Prefix string for the comment text property of the right example'
     })
     .option('entries_per_row', {
