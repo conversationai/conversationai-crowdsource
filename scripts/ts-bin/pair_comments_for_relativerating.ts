@@ -18,7 +18,7 @@ Usage: Convert answers with multiple parts into separate rows.
 
   ts-node ./ts-bin/pair_comments_for_relativerating.ts \
     --infile="./tmp/path-to-input.jsonl" \
-    --outfile="./tmp/path-to-paired.jsonl"
+    --output_path_prefix="./tmp/path-to-paired"
 */
 
 import * as yargs from 'yargs';
@@ -30,12 +30,14 @@ import * as readline from 'readline';
 // Command line arguments.
 interface Params {
   infile:string,
-  outfile:string,
+  output_path_prefix:string,
+  output_path_postfix:string,
   left_id_prefix:string,
   right_id_prefix:string,
   left_text_prefix:string,
   right_text_prefix:string,
   entries_per_row:number,
+  rows_per_file:number,
 };
 
 interface InputObj {
@@ -43,18 +45,22 @@ interface InputObj {
   id:string;
 }
 
+// TODO(ldixon): rewrite based on observables, and its sensible abstractions
+// of streams. This will also enable this to scale to more data than fits in
+// memory.
 async function main(args : Params) {
     let instream = fs.createReadStream(args.infile);
-    let outstream = fs.createWriteStream(args.outfile, {flags: 'w', encoding: 'utf-8'});
     let rl = readline.createInterface(instream);
 
     let lineCount = 0;
 
     let data : InputObj[] = [];
     let pair_id = 1;
-    let pairs_to_ouput : { [key:string]:string }[] = [];
+    // let pairs_to_ouput : { [key:string]:string }[] = [];
     let pair_id_postfix = '';
-    let out_pairs : { [key:string]:string } = {};
+    let out_pairs_for_row: { [key:string]:string } = {};
+    let out_rows_for_file: { [key:string]:string }[] = [];
+    let out_files: { [key:string]:string }[][] = [];
 
     rl.on('line', async function(line) {
       let obj : InputObj = JSON.parse(line);
@@ -73,22 +79,50 @@ async function main(args : Params) {
             pair_id_postfix = `${pair_id}`
           }
 
-          out_pairs[`${args.left_id_prefix}${pair_id_postfix}`] = d1.id;
-          out_pairs[`${args.right_id_prefix}${pair_id_postfix}`] = d2.id;
-          out_pairs[`${args.left_text_prefix}${pair_id_postfix}`] = d1.comment_text;
-          out_pairs[`${args.right_text_prefix}${pair_id_postfix}`] = d2.comment_text;
+          out_pairs_for_row[`a.p.file_id`] = `${out_files.length + 1}`;
+          out_pairs_for_row[`a.p.row_id`] = `${out_rows_for_file.length + 1}`;
+          out_pairs_for_row[`${args.left_id_prefix}${pair_id_postfix}`] = d1.id;
+          out_pairs_for_row[`${args.right_id_prefix}${pair_id_postfix}`] = d2.id;
+          out_pairs_for_row[`${args.left_text_prefix}${pair_id_postfix}`] = d1.comment_text;
+          out_pairs_for_row[`${args.right_text_prefix}${pair_id_postfix}`] = d2.comment_text;
 
           if(pair_id >= args.entries_per_row) {
-            outstream.write(`${JSON.stringify(out_pairs)}\n`);
+            out_rows_for_file.push(out_pairs_for_row);
             pair_id = 1;
-            out_pairs = {};
+            out_pairs_for_row = {};
+            if(out_rows_for_file.length >= args.rows_per_file) {
+              out_files.push(out_rows_for_file);
+              out_rows_for_file = [];
+            }
           } else {
             pair_id += 1;
           }
         }
       }
 
-      outstream.end();
+      if(pair_id > 1) {
+        console.warn(`Extra pairs not emitted: ${JSON.stringify(out_pairs_for_row)}`);
+      }
+      if(out_rows_for_file.length > 0) {
+        console.log(`Rows in last file count: ${out_rows_for_file.length}`);
+        out_files.push(out_rows_for_file);
+        out_rows_for_file = [];
+      }
+
+      console.log(`Number of files to output: ${out_files.length}`);
+
+      // Output everything.
+      let outfile_id = 1;
+      for (let outfile of out_files) {
+        let outstream = fs.createWriteStream(
+          `${args.output_path_prefix}_${outfile_id}_of_${out_files.length}${args.output_path_postfix}`,
+          {flags: 'w', encoding: 'utf-8'});
+        for (let line of outfile) {
+          outstream.write(`${JSON.stringify(line)}\n`);
+        }
+        outstream.end();
+        outfile_id += 1;
+      }
       console.log(`lineCount: ${lineCount}`);
     });
 }
@@ -117,11 +151,19 @@ let args = yargs
       default: 5,
       describe: 'The number of pairs to bundle per row.'
     })
-    .option('outfile', {
-      describe: 'Output path to CSV file to be written'
+    .option('rows_per_file', {
+      default: 2000,
+      describe: 'The number of rows to bundle per output file.'
     })
-    .demandOption(['infile', 'outfile'],
-        'Please provide at least --infile and --outfile.')
+    .option('output_path_prefix', {
+      describe: 'Output path prefix for JSONL files to be written'
+    })
+    .option('output_path_postfix', {
+      default: '.jsonl',
+      describe: 'The postfix for output files'
+    })
+    .demandOption(['infile', 'output_path_prefix'],
+        'Please provide at least --infile and --output_path_prefix.')
     .help()
     .argv;
 
