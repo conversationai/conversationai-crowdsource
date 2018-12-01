@@ -37,9 +37,10 @@ of:
 When being used to support third-party crowd-sourcing apps, where `test` and
 `training` questions are relevant, there is also a fourth table:
 
-* `question_scoring` - Each possible answer for a question can have a record
-  here that maps it to a 'score'. This is intended to provide the ability to
-  have a flexible way to score a crowd-workers answers to questions.
+* `question_scoring` - Each possible answer a question is mapped in this table
+  to a 'score' float which measures how 'good' the answer is. This provides a
+  flexible way to continuously evaluate the quality of a crowd-worker through
+  the hidden golden test questions.
 
 
 ## Pre-requisits

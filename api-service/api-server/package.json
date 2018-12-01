@@ -15,7 +15,7 @@
     "test": "mocha build/server/*_test.js build/server/setup/*_test.js"
   },
   "engines": {
-    "node": "8.11.0"
+    "node": "8.x.x"
   },
   "dependencies": {
     "@conversationai/wpconvlib": "^0.0.1",
