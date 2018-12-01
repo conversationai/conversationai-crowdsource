@@ -5,13 +5,13 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule} from '@angular/material';
 import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {RouterModule, Routes} from '@angular/router';
 
 import {AppComponent} from './app.component';
 import {BaseJobComponent} from './base_job.component';
 import {CrowdSourceApiService} from './crowd_source_api.service';
 import {IdentityCategoryHateJobComponent} from './identity_category_hate_job.component';
 import {IdentityJobComponent} from './identity_job.component';
-import {RouterModule, Routes} from '@angular/router';
 import {TestJobComponent} from './test_job.component';
 import {TestQuestionFilterComponent} from './test_question_filter.component';
 

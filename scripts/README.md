@@ -7,7 +7,12 @@ crowdsource data management. General useage expected to be:
 
 ## Installing Dependencies
 
-Global node dependencies for development: gcloud, node (suggest you use nvm to install it) are [typescript](https://www.typescriptlang.org/) to write sensible JS code, and [yarn](https://yarnpkg.com/lang/en/), and of course node (which is usually most easily installed and managed using [nvm](https://github.com/creationix/nvm/blob/master/README.md)):
+Global dependencies for development: [Google Cloud SDK (aka
+gcloud)](https://cloud.google.com/sdk/), node (which is usually most easily
+installed and managed using
+[nvm](https://github.com/creationix/nvm/blob/master/README.md)),
+[typescript](https://www.typescriptlang.org/) to write sensible JS code, and
+[yarn](https://yarnpkg.com/lang/en/).
 
 After you have installed node/npm using nvm, you can install the other global dependencies using:
 
@@ -21,16 +26,11 @@ Then from this directory, use yarn to install the local package dependencies:
 yarn install
 ```
 
-## Run Scripts
+## Script To Create a Relative Rating Dataset
 
-```bash
-ts-node ./ts-bin/pair_comments_for_relativerating.ts \
-  --infile="./tmp/path-to-input.jsonl" \
-  --outfile="./tmp/path-to-paired.jsonl"
-./node_modules/.bin/json2csv --ndjson \
-  --input="./tmp/path-to-paired.jsonl" \
-  --output="./tmp/path-to-paired.csv"
-```
+* The file `./ts-bin/pair_comments_for_relativerating.ts` contains a script to
+  convert wikipedia comments in jsonlines into a relative rating task (also in
+  jsonlines).
 
 ## Development & Testing
 

@@ -23,27 +23,28 @@ depending on some aspect of the input chunk.
 import * as stream from 'stream';
 
 type ChunkFn = (
-  chunk:string, encoding:string,
+  chunk: string, encoding: string,
   pushFn : (streamName: string,
-            chunk:string,
-            encoding?:string,
-            callback?:() => void)
+            chunk: string,
+            encoding?: string,
+            callback?: () => void)
            => void)
   => void;
 
 // Safe multiplexing from input stream to many output streams.
 // This class will pause and resume the input stream to this transform.
 export class Multiplex extends stream.Transform {
-  public outputStreams : { [streamName:string] : stream.Writable } = {};
-  public finishedPromises : { [streamName:string] : Promise<void> } = {};
-  public fullStreams : { [streamName:string] : null } = {};
-  private transformCb : ((error:Error|undefined) => void)[] = [];
-  private completeCloseFn ?: () => void;
-  private inputProcessor : ChunkFn = (chunk:string, encoding:string) => { return {}; };
+  public outputStreams: { [streamName: string] : stream.Writable } = {};
+  public finishedPromises: { [streamName: string] : Promise<void> } = {};
+  public fullStreams: { [streamName: string] : null } = {};
+  // A list of stream transform callback functions (pending being called back)
+  private transformCb: Function[] = [];
+  private completeCloseFn?: () => void;
+  private inputProcessor: ChunkFn = (chunk: string, encoding: string) => { return {}; };
   // defined only when closing.
-  constructor(options?:stream.TransformOptions) { super(options); }
+  constructor(options?: stream.TransformOptions) { super(options); }
 
-  public setInputProcessor(f:ChunkFn) {
+  public setInputProcessor(f: ChunkFn) {
     this.inputProcessor = f;
   }
 
@@ -96,7 +97,8 @@ export class Multiplex extends stream.Transform {
     writable.on('unpipe', () => { console.debug(`${streamName}: unpipe`); });
   }
 
-  pushToQueue(streamName:string, chunk:Buffer|string|{}, encoding:string, cb:() => void) {
+  pushToQueue(streamName: string, chunk: Buffer|string|{}, encoding: string,
+      cb: () => void) {
     this.push(streamName);
     let isNotFull = this.outputStreams[streamName].write(chunk, encoding, cb);
     if(!isNotFull) {
@@ -104,7 +106,7 @@ export class Multiplex extends stream.Transform {
     }
   }
 
-  _transform(chunk:string, encoding:string, cb:stream.TransformCallback) : void {
+  _transform(chunk: string, encoding: string, cb: Function) : void {
     this.inputProcessor(chunk, encoding, this.pushToQueue.bind(this));
     if (Object.keys(this.fullStreams).length === 0) {
       cb(undefined);
@@ -115,7 +117,7 @@ export class Multiplex extends stream.Transform {
     }
   }
 
-  _flush(cb:(error?:Error, data?:Buffer|string|{}) => void) : void {
+  _flush(cb: (error?: Error, data?: Buffer|string|{}) => void) : void {
     console.debug('_flush');
     this.completeCloseFn = cb;
     this.checkClose();

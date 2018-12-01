@@ -84,7 +84,8 @@ async function main(args: Params) {
 
   let interpretStream = new multiplex_transform.Multiplex();
   interpretStream.setEncoding('utf-8');
-  interpretStream.setInputProcessor((chunk:string, _encoding:string, pushFn:Function) => {
+  interpretStream.setInputProcessor((chunk: string, _encoding: string,
+      pushFn:(streamName: string, data: string, encoding: string) => void) => {
     let questionObj: QuestionT1 = JSON.parse(chunk);
     lineCount += 1;
     let answersObj: questionaire.QuestionScores =
