@@ -53,7 +53,7 @@ function createAllPairsFiles(data: InputObj[]): OutFileData[] {
   let pair_id = 1;
   let pair_id_postfix = '';
   let out_pairs_for_row: {[key: string]: string} = {};
-  let out_rows_for_file: {[key: string]: string}[] = [];
+  let out_rows_for_file: OutFileData = [];
 
   for (let d1 of data) {
     for (let d2 of data) {
@@ -61,6 +61,10 @@ function createAllPairsFiles(data: InputObj[]): OutFileData[] {
         pair_id_postfix = `${pair_id}`
       }
 
+      // Define the output fields of this JSON object that will be output in a
+      // single line of the output file. These strangely named output fields are
+      // for tools that uses it later. For other applications consumption of the
+      // output, these can be changed as needed.
       out_pairs_for_row[`a.p.file_id`] = `${out_files.length + 1}`;
       out_pairs_for_row[`a.p.row_id`] = `${out_rows_for_file.length + 1}`;
       out_pairs_for_row[`${args.left_id_prefix}${pair_id_postfix}`] = d1.id;
