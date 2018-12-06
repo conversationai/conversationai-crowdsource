@@ -16,7 +16,7 @@ limitations under the License.
 /*
 Usage: Convert answers with multiple parts into separate rows.
 
-  node build/server/setup/questions_jsonlines_transformer.js \
+ts-node server/setup/questions_jsonlines_transformer.ts \
     --infile="./tmp/Questions.json" \
     --out_scorings_file="./tmp/Scorings.json" \
     --out_questions_file="./tmp/Questions2.json"
@@ -41,13 +41,12 @@ import * as yargs from 'yargs';
 import * as db_types from '../db_types';
 import * as questionaire from '../questionaire';
 
-import * as multiplex_transform from './multiplex_transform';
+import * as multiplex_transform from '../../../../scripts/ts-bin/multiplex_transform';
 
 // Command line arguments.
 interface Params {
   infile: string, out_questions_file: string, out_scorings_file: string,
 }
-;
 
 interface QuestionT1 {
   accepted_answers: string;
@@ -85,7 +84,8 @@ async function main(args: Params) {
 
   let interpretStream = new multiplex_transform.Multiplex();
   interpretStream.setEncoding('utf-8');
-  interpretStream.setInputProcessor((chunk, encoding, pushFn) => {
+  interpretStream.setInputProcessor((chunk: string, _encoding: string,
+      pushFn:(streamName: string, data: string, encoding: string) => void) => {
     let questionObj: QuestionT1 = JSON.parse(chunk);
     lineCount += 1;
     let answersObj: questionaire.QuestionScores =

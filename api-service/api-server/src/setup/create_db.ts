@@ -29,7 +29,7 @@ https://pantheon.corp.google.com/apis/credentials/serviceaccountkey
 ```
 export GOOGLE_APPLICATION_CREDENTIALS="tmp/path-to-keyfile.json"
 
-node build/server/setup/create_db.js \
+ts-node src/setup/create_db.ts \
   --gcloud_project_id=wikidetox \
   --spanner_instance=crowdsource \
   --spanner_db_to_create=ptoxic
@@ -38,7 +38,6 @@ node build/server/setup/create_db.js \
 */
 
 import * as spanner from '@google-cloud/spanner';
-import * as fs from 'fs';
 import * as yargs from 'yargs';
 
 interface Params {
@@ -120,7 +119,7 @@ async function main(args: Params) {
 
   // Creates a database
   return spannerInstance.createDatabase(args.spanner_db_to_create, request)
-      .then((results) => {
+      .then((results : spanner.CreateDatabaseResponse) => {
         const database = results[0];
         const operation = results[1];
 
@@ -131,7 +130,7 @@ async function main(args: Params) {
         console.log(`Created database ${
             args.spanner_db_to_create} on instance ${args.spanner_instance}.`);
       })
-      .catch((e) => {
+      .catch((e: Error) => {
         console.error(`*** Failed: `, e);
       });
 }
