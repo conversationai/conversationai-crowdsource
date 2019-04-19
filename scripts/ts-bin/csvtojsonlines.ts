@@ -25,40 +25,19 @@ import * as csvtojson from 'csvtojson';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as yargs from 'yargs';
+import {csvtojsonlines} from './csvtojsonlines_lib';
 
 // Command line arguments.
 interface Params {
   infile: string, outfile: string,
 }
 
-async function main(args: Params) {
+async function main(args: Params): Promise<void> {
   let instream = fs.createReadStream(args.infile);
   let outstream = fs.createWriteStream(
     args.outfile, {flags: 'w', encoding: 'utf-8'});
-  let csvToJson = csvtojson();
 
-  let lineCount = 0;
-
-  let onceDone = new Promise((resolve, reject) => {
-    csvToJson.fromStream(instream)
-      .on('data',
-        (jsonObj: Buffer) => {
-          lineCount++;
-          outstream.write(jsonObj.toString('utf8'));
-        })
-      .on('done', (error: Error) => {
-        console.log(`lineCount: ${lineCount}`);
-        outstream.end();
-        if (error) {
-          console.log('end error:' + error.message);
-          reject(error);
-        } else {
-          console.log('end success.');
-          resolve();
-        }
-      });
-  });
-  await onceDone;
+  await csvtojsonlines(instream, outstream);
 }
 
 let args = yargs.option('infile', {describe: 'Input path to CSV file.'})
