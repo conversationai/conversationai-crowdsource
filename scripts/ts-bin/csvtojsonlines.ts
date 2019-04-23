@@ -25,55 +25,34 @@ import * as csvtojson from 'csvtojson';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as yargs from 'yargs';
+import {csvtojsonlines} from './csvtojsonlines_lib';
 
 // Command line arguments.
 interface Params {
   infile: string, outfile: string,
 }
 
-async function main(args: Params) {
+async function main(args: Params): Promise<void> {
   let instream = fs.createReadStream(args.infile);
   let outstream = fs.createWriteStream(
-      args.outfile, {flags: 'w', encoding: 'utf-8'});
-  let csvToJson = csvtojson();
+    args.outfile, {flags: 'w', encoding: 'utf-8'});
 
-  let lineCount = 0;
-
-  let onceDone = new Promise((resolve, reject) => {
-    csvToJson.fromStream(instream)
-        .on('json',
-            (jsonObj: {}) => {
-              lineCount++;
-              outstream.write(`${JSON.stringify(jsonObj)}\n`);
-            })
-        .on('done', (error: Error) => {
-          console.log(`lineCount: ${lineCount}`);
-          outstream.end();
-          if (error) {
-            console.log('end error:' + error.message);
-            reject(error);
-          } else {
-            console.log('end success.');
-            resolve();
-          }
-        });
-  });
-  await onceDone;
+  await csvtojsonlines(instream, outstream);
 }
 
 let args = yargs.option('infile', {describe: 'Input path to CSV file.'})
-               .option('outfile', {describe: 'Path to output JSON-lines to'})
-               .demandOption(
-                   ['infile', 'outfile'],
-                   'Please provide at least --infile and --outfile.')
-               .help()
-               .argv;
+  .option('outfile', {describe: 'Path to output JSON-lines to'})
+  .demandOption(
+    ['infile', 'outfile'],
+    'Please provide at least --infile and --outfile.')
+  .help()
+  .argv;
 
 main(args as any as Params)
-    .then(() => {
-      console.log('Success!');
-    })
-    .catch(e => {
-      console.error('Failed: ', e);
-      process.exit(1);
-    });
+  .then(() => {
+    console.log('Success!');
+  })
+  .catch(e => {
+    console.error('Failed: ', e);
+    process.exit(1);
+  });

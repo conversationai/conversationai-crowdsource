@@ -5,9 +5,7 @@
   "version": "0.0.1",
   "license": "Apache-2.0",
   "scripts": {
-    "build": "tsc --outdir build/js-bin/",
-    "build:watch": "tsc --outdir build/js-bin/ --watch",
-    "test": "mocha build/js-bin/*_test.js"
+    "test": "mocha -r ts-node/register ts-bin/*_test.ts"
   },
   "dependencies": {
     "@types/byline": "^4.2.31",
