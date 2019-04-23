@@ -18,11 +18,11 @@ import * as stream from 'stream';
 
 export async function csvtojsonlines(instream: stream.Readable,
   outstream: stream.Writable): Promise<void> {
-  let csvToJson = csvtojson();
+  const csvToJson = csvtojson();
 
   let lineCount = 0;
 
-  let onceDone = new Promise((resolve, reject) => {
+  const onceDone = new Promise((resolve, reject) => {
     csvToJson.fromStream(instream)
       .on('data',
         (jsonObj: Buffer) => {

@@ -3,9 +3,9 @@ import * as stream from 'stream';
 import {expect} from 'chai';
 import 'mocha';
 
-describe('Hello function', () => {
-  it('should return hello world', async function () {
-    let r = new stream.Readable();
+describe('CSV to JSON-lines tests', () => {
+  it('simple CSV to JSONlines on streams', async function () {
+    const r = new stream.Readable();
     r._read = () => {};
     r.push('foo, bar\n');
     r.push('1, a\n');
@@ -13,11 +13,11 @@ describe('Hello function', () => {
     r.push('3, c\n');
     r.push(null);
 
-    let stuff: {}[] = [];
-    let w = new stream.PassThrough();
+    const stuff: {}[] = [];
+    const w = new stream.PassThrough();
     w.on('data', (d: string) => {stuff.push(JSON.parse(d));});
 
-    let onceFinished = new Promise((resolve, reject) => {
+    const onceFinished = new Promise((resolve, reject) => {
       w.on('finish', () => {resolve()});
     });
 
