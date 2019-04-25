@@ -28,13 +28,14 @@ yarn install
 
 Before you can deploy, you need to:
 
-1. Copy the `server_config.template.json` file to `build/config/server_config.json`.
+1. Copy the `server_config.template.json` file to `build/config/server_config.json`
+   * You can do this by running: `yarn run setup`
 2. In the `build/config/server_config.json` file, set these values:
 
     * `cloudProjectId` This is the name of your google cloud project.
     * `spannerInstanceId` This is your google cloud project's spanner instance name (the service than runs your spanner database)
     * `spannerDatabaseName` This is the name of a spanner database in your instance that will hold the tables.
-    * `adminKey` This is a secret key that will be used to perform administrative actions. In particular, you should create an secret value for `adminKey`. e.g. using output of the command:
+    * `adminKey` This is a secret key that will be used by an http-client to perform administrative actions. In particular, you should create an secret value for `adminKey`. e.g. using output of the command:
         ```
         dd if=/dev/urandom bs=1 count=32 | base64
         ```
@@ -77,22 +78,11 @@ ts-node src/setup/create_db.ts
 
 To run this script you'll also need to have setup a service account key with
 `Compute Engine default service account` credentials, which you can do from:
-https://pantheon.corp.google.com/apis/credentials/serviceaccountkey
+https://console.developers.google.com/apis/credentials/serviceaccountkey
 See the top of the file `src/setup/create_db.ts` for more details.
 
 Note: at any point you can delete the DB and run this script again (you will
 loose all the records in the database when you do this).
-
-### Deployment to Google Cloud Project
-
-This project uses appengine flexible environment for deployment, which is
-configured in the `app.yml` file.
-
-To deploy, make sure your cloud project is set appropriately, and run;
-
-```
-gcloud app deploy
-```
 
 ## Development
 
@@ -105,7 +95,28 @@ yarn run start:watch
 This will also watch all the files, rebuilding and restarting the server when anything
 changes.
 
+## Deployment to Google Cloud Project
+
+This project uses appengine flexible environment for deployment, which is
+configured in the `app.yml` file.
+
+To deploy, make sure your cloud project is set appropriately, and run;
+
+```
+gcloud app deploy
+```
+
 ## Design
+
+### Architecture
+
+There is a spanner database backend that holds all data (includnig the questions and answers). There is a crowdsourcing API server (this repository) that manages a set of clients. Each client is a crowdsourcing application that stores data in the spanner database, and its access is controlled by the API server (we don't want one client to access another's data). Each client (typically a separate web-application or mobile app) has a set of crowdsourcing jobs, where each job is a particular data collection effort. Each job consists of questions and answers, and some meta-data. Finally, there are crowdworkers who access a client's application to answer questions in a particular job.
+
+Note that because many jobs may want to use the same set of questions (e.g. to test different UI with the crowdworkers), and all questions live in the same large underlying table, each question has a `question_group_id` that identifies which subset of the questions is belongs to. Clients that then select questions (e.g. questions that still need answers) from a `question_group_id` to show to the crowdworker.
+
+### Usage
+
+See [example interactions with this API](docs/example_curl_interactions.md) for examples of how to use the API server once it is running.
 
 ### Tables
 
