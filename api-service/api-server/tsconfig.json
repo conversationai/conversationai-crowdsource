@@ -29,10 +29,10 @@
     // Turned on in call (because it can't be turned off otherwise).
     // "sourceMap": true,
     "target": "es6",
-    "outDir": "build/server/"
+    "outDir": "build/server/",
+    "typeRoots" : ["./node_modules/@types", "contrib_typings",]
   },
   "include": [
-    "contrib_typings/*.d.ts",
     "src/**/*.ts"
   ]
 }
