@@ -19,8 +19,9 @@ install:
   - cd ../../
 script:
   - cd api-service/webapp-demo
-  - yarn install
+  - yarn run test --watch false
   - cd ../../
   - cd api-service/api-server
-  - yarn run test --watch false
+  - yarn run build
+  - yarn run test
   - cd ../../
