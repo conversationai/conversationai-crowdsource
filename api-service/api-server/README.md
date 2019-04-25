@@ -112,6 +112,8 @@ gcloud app deploy
 
 There is a spanner database backend that holds all data (includnig the questions and answers). There is a crowdsourcing API server (this repository) that manages a set of clients. Each client is a crowdsourcing application that stores data in the spanner database, and its access is controlled by the API server (we don't want one client to access another's data). Each client (typically a separate web-application or mobile app) has a set of crowdsourcing jobs, where each job is a particular data collection effort. Each job consists of questions and answers, and some meta-data. Finally, there are crowdworkers who access a client's application to answer questions in a particular job.
 
+Note that because many jobs may want to use the same set of questions (e.g. to test different UI with the crowdworkers), and all questions live in the same large underlying table, each question has a `question_group_id` that identifies which subset of the questions is belongs to. Clients that then select questions (e.g. questions that still need answers) from a `question_group_id` to show to the crowdworker.
+
 ### Usage
 
 See [example interactions with this API](docs/example_curl_interactions.md) for examples of how to use the API server once it is running.
