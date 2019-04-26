@@ -22,18 +22,14 @@ Usage: Convert answers with multiple parts into separate rows.
 */
 
 import * as yargs from 'yargs';
-import * as db_types from '../db_types';
 import * as fs from 'fs';
 import * as readline from 'readline';
-import * as stream from 'stream';
 
 // Command line arguments.
 interface Params {
   infile: string,
   outfile: string,
 };
-
-// "{\"identityHate\":\"NotAtAll\",\"threat\":\"NotAtAll\",\"readableAndInEnglish\":\"Yes\",\"toxic\":\"Somewhat\"}"
 
 interface AnswerT1 {
   answer: string,

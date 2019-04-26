@@ -53,7 +53,6 @@ import * as fs from 'fs';
 import * as yargs from 'yargs';
 
 import * as crowdsourcedb from '../cs_db';
-// import * as readline from 'readline';
 import * as db_types from '../db_types';
 
 import * as util from './util';
