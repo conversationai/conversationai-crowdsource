@@ -9,13 +9,13 @@
     "build": "tsc --outdir build/server/",
     "build:watch": "tsc --outdir build/server/ --watch",
     "start": "node build/server/run_server.js build/config/server_config.json",
-    "start:watch": "yarn run build:watch & NODE_ENV='development' nodemon --inspect build/server/run_server.js build/config/server_config.json",
+    "start:watch": "concurrently \"yarn run build:watch\" \"NODE_ENV='development' nodemon --inspect build/server/run_server.js build/config/server_config.json\"",
     "start-dev": "NODE_ENV='development' node build/server/run_server.js build/config/server_config.json",
     "start-prod": "NODE_ENV='production' node build/server/run_server.js build/config/server_config.json",
     "test": "mocha build/server/*_test.js build/server/setup/*_test.js"
   },
   "engines": {
-    "node": "8.x.x"
+    "node": "10.x.x"
   },
   "dependencies": {
     "@conversationai/wpconvlib": "^0.0.1",

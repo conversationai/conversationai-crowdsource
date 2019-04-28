@@ -86,6 +86,12 @@ loose all the records in the database when you do this).
 
 ## Development
 
+Build API server:
+
+```
+yarn run build:watch
+```
+
 To start a local dev server:
 
 ```

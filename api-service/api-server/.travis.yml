@@ -11,3 +11,4 @@ script:
   - yarn install
   - yarn run setup
   - yarn run build
+  - yarn run test
