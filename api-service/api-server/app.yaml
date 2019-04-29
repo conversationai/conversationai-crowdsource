@@ -11,15 +11,8 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-runtime: nodejs
-env: flex
-threadsafe: true
+runtime: nodejs10
 service: crowdsource-api
 
 env_variables:
   NODE_ENV: 'production'
-
-# Temporary setting to keep gcloud from uploading node_modules
-skip_files:
- - ^node_modules$

@@ -1,0 +1,9 @@
+node_modules/
+src/
+contrib/typings/
+docs/
+tmp/
+.git/
+.gitignore
+.dockerignore
+*.md
