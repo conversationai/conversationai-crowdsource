@@ -66,7 +66,10 @@ export class IdentityJobComponent extends BaseJobComponent {
 
   handleKeyDown($event: KeyboardEvent) {
     if ($event.key === 's') {
-      this.sendScoreToApi();
+      if (!this.questionId) {
+        throw new Error('handleKeyDown s, to send data, but questionId is null');
+      }
+      this.sendScoreToApi(this.questionId);
     }
   }
 }

@@ -17,22 +17,22 @@ import {TestQuestionFilterComponent} from './test_question_filter.component';
 
 const appRoutes: Routes = [
   // This path (with no parameters) is needed because paramMap will use the
-  // customClientJobKey in matrix url notation after the initial load.
+  // clientJobKey in matrix url notation after the initial load.
   {path: 'test_job', component: TestJobComponent},
-  {path: 'test_job/:customClientJobKey', component: TestJobComponent},
+  {path: 'test_job/:clientJobKey', component: TestJobComponent},
   {
     path: 'identity_category_hate_job',
     component: IdentityCategoryHateJobComponent
   },
   {
-    path: 'identity_category_hate_job/:customClientJobKey',
+    path: 'identity_category_hate_job/:clientJobKey',
     component: IdentityCategoryHateJobComponent
   },
   {path: 'identity_job', component: IdentityJobComponent},
-  {path: 'identity_job/:customClientJobKey', component: IdentityJobComponent},
+  {path: 'identity_job/:clientJobKey', component: IdentityJobComponent},
   {path: 'test_question_filter', component: TestQuestionFilterComponent},
   {
-    path: 'test_question_filter/:customClientJobKey',
+    path: 'test_question_filter/:clientJobKey',
     component: TestQuestionFilterComponent
   },
   {path: '', redirectTo: '/test_job', pathMatch: 'full'},

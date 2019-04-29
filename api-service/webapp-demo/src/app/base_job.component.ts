@@ -23,7 +23,7 @@ const YES = 'Yes';
 const NO = 'No';
 
 interface JobAndQuestionUrlParams {
-  customClientJobKey: string;
+  clientJobKey: string;
   questionId?: string;
 }
 
@@ -31,23 +31,23 @@ interface JobAndQuestionUrlParams {
  * Base component to inherit from for building custom job components.
  *
  * Each component that inherits from this should override or set the properties
- *   -customClientJobKey
- *   -routerPath
+ *   - clientJobKey
+ *   - routerPath
  *
  * and additionally add routes to appRoutes corresponding to routerPath in
  * app.module.ts.
  *
  * Child components should also override the functions:
- *   -resetQuestionUI()
- *   -buildAnswer() [When overriding this function, you should call
- *                   super.buildAnswer()]
+ *   - resetQuestionUI()
+ *   - buildAnswer() [When overriding this function, you should call
+ *                    super.buildAnswer()]
  */
 @Component({
   selector: 'base-job',
   template: '<div>Add your own template to extend the BaseJob component</div>',
 })
 export class BaseJobComponent implements OnInit {
-  @Input() customClientJobKey: string|null = null;
+  @Input() clientJobKey: string;
   @Input() routerPath = '/base_job';
 
   userNonce: string|null;
@@ -77,10 +77,10 @@ export class BaseJobComponent implements OnInit {
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
-    var query = document.location.search.substr(1)
-    var embedded_query = /embedded=(true|false)/g.exec(query);
+    const query = document.location.search.substr(1)
+    const embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
-      this.notEmbedded = !(embedded_query[1] == 'true');
+      this.notEmbedded = !(embedded_query[1] === 'true');
     }
 
     this.userNonce = localStorage.getItem('user_nonce');
@@ -129,16 +129,20 @@ export class BaseJobComponent implements OnInit {
   }
 
   updateIds(params: ParamMap): void {
-    this.customClientJobKey = params.get('customClientJobKey');
+    const clientJobKey = params.get('clientJobKey');
+    if (clientJobKey === null) {
+      throw new Error('clientJobKey must be specified.');
+    }
+    this.clientJobKey = clientJobKey;
     this.questionId = params.get('questionId');
   }
 
   updateUrl(): void {
-    if (!this.customClientJobKey) {
+    if (!this.clientJobKey) {
       return;
     }
     const urlParams: JobAndQuestionUrlParams = {
-      customClientJobKey: this.customClientJobKey,
+      clientJobKey: this.clientJobKey,
     };
 
     if (this.questionId) {
@@ -148,20 +152,20 @@ export class BaseJobComponent implements OnInit {
     this.router.navigate([this.routerPath, urlParams]);
   }
 
-  public sendScoreToApi() {
+  public sendScoreToApi(questionId: string, userNonce?: string) {
     const answer = this.buildAnswer();
 
     // If we have a parent window, send message to it with the answer. This
     // allows the crowdsourcing interface to be embedded in an iFrame and
     // communicate with the parent window.
-    if (window.self != window.top) {
+    if (window.self !== window.top) {
       console.log('sending message with the answer to parent window');
       window.parent.postMessage(JSON.stringify(answer), '*');
     } else {
       console.log('not sending message because no parent window');
     }
 
-    this.crowdSourceApiService.postAnswer(answer, this.customClientJobKey)
+    this.crowdSourceApiService.postAnswer(this.clientJobKey, questionId, userNonce, answer)
         .subscribe(
             (data: {}) => {
               console.log(
@@ -172,7 +176,7 @@ export class BaseJobComponent implements OnInit {
               this.questionId = '';
               this.getNextWorkItem();
             },
-            (e) => {
+            (e: Error) => {
               this.errorMessage = e.message;
             });
   }
@@ -183,7 +187,7 @@ export class BaseJobComponent implements OnInit {
     let shouldUpdateUrl = this.selectedWork.question_id !== this.questionId
     this.questionId = this.selectedWork.question_id;
 
-    if (!this.customClientJobKey) {
+    if (!this.clientJobKey) {
       throw new Error('Trying to pick work, but no job key found');
     }
 
@@ -196,10 +200,10 @@ export class BaseJobComponent implements OnInit {
     this.loading = true;
     this.question = null;
 
-    if (this.customClientJobKey && this.questionId) {
+    if (this.clientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
       this.crowdSourceApiService.getWorkToDoForQuestion(
-        this.customClientJobKey, this.questionId)
+        this.clientJobKey, this.questionId)
         .subscribe(
               (workToDo: WorkToDo) => {
                 this.chooseRandomWorkToDo([workToDo]);
@@ -208,7 +212,7 @@ export class BaseJobComponent implements OnInit {
                 this.errorMessage = e.message;
               });
     } else {
-      this.crowdSourceApiService.getWorkToDo(this.customClientJobKey)
+      this.crowdSourceApiService.getWorkToDo(this.clientJobKey)
           .subscribe(
               (data: WorkToDo[]) => {
                 this.chooseRandomWorkToDo(data);
@@ -218,7 +222,7 @@ export class BaseJobComponent implements OnInit {
               });
     }
 
-    this.crowdSourceApiService.getJobQuality()
+    this.crowdSourceApiService.getJobQuality(this.clientJobKey)
         .subscribe(
             (data: JobQualitySummary) => {
               this.overall_job_answer_count = data.toanswer_count;
@@ -232,7 +236,7 @@ export class BaseJobComponent implements OnInit {
       throw new Error('No worker id available');
     }
 
-    this.crowdSourceApiService.getWorkerQuality(this.userNonce)
+    this.crowdSourceApiService.getWorkerQuality(this.clientJobKey, this.userNonce)
         .subscribe(
             (data: WorkerQualitySummary) => {
               this.training_answer_count = data.answer_count;

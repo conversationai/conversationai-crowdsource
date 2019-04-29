@@ -5,6 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 import { HttpClientModule, HttpRequest } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ParamMapStub } from './param_map_stub';
+
 import {
   HttpClientTestingModule,
   HttpTestingController
@@ -26,11 +28,12 @@ import { CrowdSourceApiService } from './crowd_source_api.service';
   selector: 'my-job',
   template: `
     <div *ngIf="question !== null">{{questionId}} {{question.text}}</div>
-    <button id="sendScoreButton" (click)="sendScoreToApi()">Send score</button>
+    <button id="sendScoreButton" (click)="sendScoreToApi(questionId)">Send score</button>
   `
 })
 class MyJobComponent extends BaseJobComponent {
-  customClientJobKey = 'testJobKey';
+  clientJobKey = 'testJobKey';
+  questionId = 'fooQuestion';
   routerPath = '/my_job';
 }
 
@@ -64,29 +67,6 @@ class ActivatedRouteStub {
   set testParams(params: {}) {
     this.stubTestParams = new ParamMapStub(params);
     this.paramsSubject.next(this.stubTestParams);
-  }
-}
-
-// A stub class that implements ParamMap.
-class ParamMapStub implements ParamMap {
-  constructor(private params: {[key: string]: string}) {}
-  has(name: string): boolean {
-    return this.params.hasOwnProperty(name);
-  }
-  get(name: string): string | null {
-    return this.params[name];
-  }
-
-  getAll(name: string): string[] {
-    return [this.params[name]];
-  }
-
-  get keys(): string[] {
-    let objKeys = [];
-    for(let key in this.params) {
-      objKeys.push(key);
-    }
-    return objKeys;
   }
 }
 
@@ -132,7 +112,7 @@ describe('BaseComponent', () => {
                 component: MyJobComponent
               },
               {
-                path: 'my_job/:customClientJobKey',
+                path: 'my_job/:clientJobKey',
                 component: MyJobComponent
               },
           ]
@@ -164,7 +144,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
@@ -191,7 +171,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
@@ -219,7 +199,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
@@ -242,7 +222,7 @@ describe('BaseComponent', () => {
 
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
@@ -275,7 +255,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
@@ -300,7 +280,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);

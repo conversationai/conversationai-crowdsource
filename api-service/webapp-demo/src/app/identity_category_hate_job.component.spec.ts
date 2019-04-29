@@ -121,7 +121,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
                 component: IdentityCategoryHateJobComponent
               },
               {
-                path: 'identity_category_hate_job/:customClientJobKey',
+                path: 'identity_category_hate_job/:clientJobKey',
                 component: IdentityCategoryHateJobComponent
               },
           ]
@@ -150,7 +150,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Displays question', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const fixture = TestBed.createComponent(IdentityCategoryHateJobTestComponent);
@@ -168,7 +168,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Boolean labels: Shows hateful option when category checkbox is checked', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const fixture = TestBed.createComponent(IdentityCategoryHateJobTestComponent);
@@ -236,7 +236,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Boolean labels: Unchecking identity unchecks hate option', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const fixture = TestBed.createComponent(IdentityCategoryHateJobTestComponent);
@@ -296,7 +296,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Detailed labels: Unchecking identity unchecks all detail options', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
 
@@ -372,7 +372,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Detailed labels: Shows hateful detail options when category checkbox is checked', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const HATE_DETAIL_OPTION_COUNT = 5;
@@ -451,7 +451,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Detailed labels: Checking "None of the Above" unchecks other detail options', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const HATE_DETAIL_OPTION_COUNT = 5;
@@ -537,7 +537,7 @@ describe('IdentityCategoryHateJobComponent tests', () => {
   it('Detailed labels: Checking detail options unchecks "None of the Above"', async(
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const HATE_DETAIL_OPTION_COUNT = 5;

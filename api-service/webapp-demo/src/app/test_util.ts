@@ -3,6 +3,7 @@ import { ComponentFixture } from '@angular/core/testing';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { ParamMapStub } from './param_map_stub';
 
 // Stub for ActivatedRoute.
 @Injectable()
@@ -20,34 +21,11 @@ export class ActivatedRouteStub {
   }
 }
 
-// A stub class that implements ParamMap.
-class ParamMapStub implements ParamMap {
-  constructor(private params: {[key: string]: string}) {}
-  has(name: string): boolean {
-    return this.params.hasOwnProperty(name);
-  }
-  get(name: string): string | null {
-    return this.params[name];
-  }
-
-  getAll(name: string): string[] {
-    return [this.params[name]];
-  }
-
-  get keys(): string[] {
-    let objKeys = [];
-    for(let key in this.params) {
-      objKeys.push(key);
-    }
-    return objKeys;
-  }
-}
-
 export function setupQuestionMocks(httpMock: HttpTestingController,
-                                   customClientJobKey: string,
+                                   clientJobKey: string,
                                    fixture: ComponentFixture<any>) {
   // Verify the call to load a question.
-  httpMock.expectOne('/api/work/' + customClientJobKey).flush([{
+  httpMock.expectOne('/api/work/' + clientJobKey).flush([{
     question_id: 'foo',
     question: {id: 'bar', text: 'Hello world!'},
     answers_per_question: 10,
