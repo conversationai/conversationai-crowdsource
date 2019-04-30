@@ -97,7 +97,6 @@ export class BaseJobComponent implements OnInit {
       this.userNonce = Math.random().toString();
       localStorage.setItem('user_nonce', this.userNonce);
     }
-    console.log(`user_nonce: ` + this.userNonce);
 
     // TODO(rachelrosen): Refactor this code to use a more asynchronous pattern,
     // 'rxjs/add/operator/switchMap';
@@ -143,8 +142,6 @@ export class BaseJobComponent implements OnInit {
 
   public sendScoreToApi() {
     const answer = this.buildAnswer();
-    console.log(`answer:`);
-    console.log(answer);
     // If we have a parent window, send message to it with the answer. This
     // allows the crowdsourcing interface to be embedded in an iFrame and
     // communicate with the parent window.
@@ -159,8 +156,6 @@ export class BaseJobComponent implements OnInit {
         this.clientJobKey, this.questionId, this.userNonce, answer)
       .subscribe(
         (data: {}) => {
-          console.log(
-            `sent score; got response:` + JSON.stringify(data, null, 2));
           this.local_sent_count += 1;
           localStorage.setItem(
             'local_sent_count', this.local_sent_count.toString());
@@ -177,8 +172,6 @@ export class BaseJobComponent implements OnInit {
     const randomItemIndex = getRandomInt(0, data.length - 1);
 
     this.selectedWork = data[randomItemIndex];
-    console.log('Work to do: ', this.selectedWork);
-    let shouldUpdateUrl = this.selectedWork.question_id !== this.questionId
     this.questionId = this.selectedWork.question_id;
 
     if (!this.clientJobKey) {
@@ -200,7 +193,6 @@ export class BaseJobComponent implements OnInit {
         this.clientJobKey, this.questionId)
         .subscribe(
           (workToDo: WorkToDo) => {
-            console.log(workToDo);
             this.chooseRandomWorkToDo([workToDo]);
           },
           (e) => {
@@ -211,7 +203,6 @@ export class BaseJobComponent implements OnInit {
       this.crowdSourceApiService.getWorkToDo(this.clientJobKey)
         .subscribe(
           (workItemsToDo: WorkToDo[]) => {
-            console.log(workItemsToDo);
             this.chooseRandomWorkToDo(workItemsToDo);
           },
           (e) => {
