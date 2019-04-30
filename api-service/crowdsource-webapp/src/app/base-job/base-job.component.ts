@@ -46,7 +46,7 @@ interface JobAndQuestionUrlParams {
   selector: 'app-base-job',
   templateUrl: './base-job.component.html',
 })
-export class BaseJobComponent implements OnInit {
+export class BaseJobComponent<T> implements OnInit {
   @Input() clientJobKey: string;
   @Input() routerPath = '/base_job';
 
@@ -55,9 +55,9 @@ export class BaseJobComponent implements OnInit {
 
   notEmbedded = true;
 
-  selectedWork: WorkToDo;
+  selectedWork: WorkToDo<T>;
   questionId: string | null = null;
-  question: CommentQuestion | null;
+  question: T | null;
 
   loading: boolean;
 
@@ -71,13 +71,15 @@ export class BaseJobComponent implements OnInit {
   // requests from the browser's prespective.
   local_sent_count = 0;
 
+  testData: WorkToDo<T>[] = [];
+
   constructor(private router: Router,
     private route: ActivatedRoute,
     private crowdSourceApiService: CrowdsourceApiService) { }
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
-    const query = document.location.search.substr(1)
+    const query = document.location.search.substr(1);
     const embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
       this.notEmbedded = !(embedded_query[1] === 'true');
@@ -114,6 +116,10 @@ export class BaseJobComponent implements OnInit {
   // Override this in subclasses to send the job-specific answer.
   public buildAnswer(): {} {
     return { foo: 'bar' };
+  }
+
+  setTestData(data: WorkToDo<T>[]): void {
+    this.testData = data;
   }
 
   updateIds(params: ParamMap): void {
@@ -168,7 +174,11 @@ export class BaseJobComponent implements OnInit {
         });
   }
 
-  chooseRandomWorkToDo(data: WorkToDo[]): void {
+  chooseRandomWorkToDo(data: WorkToDo<T>[]): void {
+    if (data.length === 0) {
+      console.error('Data length is 0 in chooseRandomWorkToDo()');
+      return;
+    }
     const randomItemIndex = getRandomInt(0, data.length - 1);
 
     this.selectedWork = data[randomItemIndex];
@@ -179,6 +189,10 @@ export class BaseJobComponent implements OnInit {
     }
 
     this.updateUrl();
+    this.updateQuestion();
+  }
+
+  protected updateQuestion(): void {
     this.question = this.selectedWork.question;
   }
 
@@ -187,12 +201,16 @@ export class BaseJobComponent implements OnInit {
     this.loading = true;
     this.question = null;
 
+    if (this.testData) {
+      this.chooseRandomWorkToDo(this.testData);
+      return;
+    }
     if (this.clientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
-      this.crowdSourceApiService.getWorkToDoForQuestion(
+      this.crowdSourceApiService.getWorkToDoForQuestion<T>(
         this.clientJobKey, this.questionId)
         .subscribe(
-          (workToDo: WorkToDo) => {
+          (workToDo: WorkToDo<T>) => {
             this.chooseRandomWorkToDo([workToDo]);
           },
           (e) => {
@@ -200,9 +218,9 @@ export class BaseJobComponent implements OnInit {
             this.errorMessages.push(e.message);
           });
     } else {
-      this.crowdSourceApiService.getWorkToDo(this.clientJobKey)
+      this.crowdSourceApiService.getWorkToDo<T>(this.clientJobKey)
         .subscribe(
-          (workItemsToDo: WorkToDo[]) => {
+          (workItemsToDo: WorkToDo<T>[]) => {
             this.chooseRandomWorkToDo(workItemsToDo);
           },
           (e) => {

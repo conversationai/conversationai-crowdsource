@@ -18,9 +18,9 @@ import { Observable } from 'rxjs';
 // word separaters instead of useing CamelCase.
 // TODO: make the DB, and field names, and any uses in the server, also be
 // CamelCase so that we can use a more consistent code style.
-export interface WorkToDo {
+export interface WorkToDo<T> {
   question_id: string;
-  question: CommentQuestion;
+  question: T;
   answers_per_question: number;
   answer_count: number;
 }
@@ -45,21 +45,21 @@ export class CrowdsourceApiService {
 
   constructor(private http: HttpClient) {}
 
-  getWorkToDoForQuestion(clientJobKey: string, questionId: string):
-    Observable<WorkToDo> {
-    return this.http.get<WorkToDo>(`/client_jobs/${clientJobKey}/questions/${questionId}`);
+  getWorkToDoForQuestion<T>(clientJobKey: string, questionId: string):
+    Observable<WorkToDo<T>> {
+    return this.http.get<WorkToDo<T>>(`/client_jobs/${clientJobKey}/questions/${questionId}`);
   }
 
-  getWorkToDo(clientJobKey: string): Observable<WorkToDo[]> {
+  getWorkToDo<T>(clientJobKey: string): Observable<WorkToDo<T>[]> {
       // If specified job, get next questions for that job.
-      return this.http.get<WorkToDo[]>(`/client_jobs/${clientJobKey}/next10_unanswered_questions`);
+      return this.http.get<WorkToDo<T>[]>(`/client_jobs/${clientJobKey}/next10_unanswered_questions`);
   }
 
   getJobQuality(clientJobKey: string): Observable<JobQualitySummary> {
     return this.http.get<JobQualitySummary>(`/client_jobs/${clientJobKey}/quality_summary`);
   }
 
-  getWorkerQuality(clientJobKey: string, userNonce: string): Observable<WorkerQualitySummary>{
+  getWorkerQuality(clientJobKey: string, userNonce: string): Observable<WorkerQualitySummary> {
     return this.http.get<WorkerQualitySummary>(`/client_jobs/${clientJobKey}/workers/${userNonce}/quality_summary`);
   }
 

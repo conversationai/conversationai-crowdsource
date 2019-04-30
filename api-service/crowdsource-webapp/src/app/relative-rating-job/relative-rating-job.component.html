@@ -1,0 +1,45 @@
+<!--The content below is only a placeholder and can be replaced.-->
+<h1>Toxicity Job</h1>
+
+<div class="counts" *ngIf="notEmbedded">
+  <div>my worker id: {{userNonce}}</div>
+  <div>local_sent_count: {{local_sent_count}}</div>
+  <div>training_answer_count: {{training_answer_count}}</div>
+  <div>user_mean_score: {{user_mean_score}}</div>
+  <div>overall_job_answer_count: {{overall_job_answer_count}}</div>
+  <div>overall_job_mean_score: {{overall_job_mean_score}}</div>
+</div>
+
+<div *ngIf="errorMessages.length > 0" class="errorMessage">
+  <div>
+    <div *ngFor="let errorMessage of errorMessages">{{errorMessage}}</div>
+  </div>
+  <button mat-icon-button color="warn" (click)="clearError()"><mat-icon>close</mat-icon></button>
+</div>
+
+<div *ngIf="!question">
+  Loading...
+</div>
+
+<div *ngIf="question">
+  <div class="id" *ngIf="notEmbedded">Question Id: <span>{{question.id}}</span></div>
+
+  <div class="text-header">Comment 1</div>
+  <div class="text">{{commentA}}</div>
+  <div class="text-header">Comment 2</div>
+  <div class="text">{{commentB}}</div>
+
+  <div class="three-question-group">
+    <mat-radio-group [(ngModel)]="toxicityOption">
+      <div class="toxicity-selected-value"><span class="label-heading">How does comment 1 compare to comment 2?</span></div>
+      <div *ngFor="let option of toxicityOptions">
+        <mat-radio-button class="toxicity-radio-button" [value]="option">{{option}}</mat-radio-button>
+      </div>
+    </mat-radio-group>
+  </div>
+
+  <div>
+    <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
+  </div>
+
+</div>
