@@ -25,9 +25,9 @@
   <div class="id" *ngIf="notEmbedded">Question Id: <span>{{question.id}}</span></div>
 
   <div class="text-header">Comment 1</div>
-  <div class="text">{{commentA}}</div>
+  <div class="text">{{question.comment_a}}</div>
   <div class="text-header">Comment 2</div>
-  <div class="text">{{commentB}}</div>
+  <div class="text">{{question.comment_b}}</div>
 
   <div class="three-question-group">
     <mat-radio-group [(ngModel)]="toxicityOption">

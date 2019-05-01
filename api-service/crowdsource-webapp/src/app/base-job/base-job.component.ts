@@ -71,7 +71,7 @@ export class BaseJobComponent<T> implements OnInit {
   // requests from the browser's prespective.
   local_sent_count = 0;
 
-  testData: WorkToDo<T>[] = [];
+  testData: WorkToDo<T>[];
 
   constructor(private router: Router,
     private route: ActivatedRoute,
@@ -179,6 +179,7 @@ export class BaseJobComponent<T> implements OnInit {
       console.error('Data length is 0 in chooseRandomWorkToDo()');
       return;
     }
+    console.log(data);
     const randomItemIndex = getRandomInt(0, data.length - 1);
 
     this.selectedWork = data[randomItemIndex];
@@ -202,6 +203,7 @@ export class BaseJobComponent<T> implements OnInit {
     this.question = null;
 
     if (this.testData) {
+      console.log('Using test data', this.testData);
       this.chooseRandomWorkToDo(this.testData);
       return;
     }

@@ -9,8 +9,12 @@ const routes: Routes = [
   {path: 'toxicity_job', component: ToxicityJobComponent},
   {path: 'toxicity_job/:clientJobKey', component: ToxicityJobComponent},
   {path: '', redirectTo: 'toxicity_job/600-dawid-skene-high-diffs', pathMatch: 'full'},
-  {path: 'relative_rating_job', component: RelativeRatingJobComponent},
   {path: 'relative_rating_job/:clientJobKey', component: RelativeRatingJobComponent},
+  {
+    path: 'relative_rating_job',
+    redirectTo: 'relative_rating_job/wikipedia_relative_rating_pairs',
+    pathMatch: 'full'
+  },
 ];
 
 @NgModule({
