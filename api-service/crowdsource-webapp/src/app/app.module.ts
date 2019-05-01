@@ -11,6 +11,7 @@ import { MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardM
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CrowdsourceApiService } from './crowdsource-api.service';
 import { HttpClientModule } from '@angular/common/http';
+import {DragDropModule} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { HttpClientModule } from '@angular/common/http';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
+    DragDropModule,
     FormsModule,
     MatAutocompleteModule,
     MatButtonModule,
