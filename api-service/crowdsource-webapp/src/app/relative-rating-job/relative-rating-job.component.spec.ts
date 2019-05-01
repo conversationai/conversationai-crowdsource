@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ToxicityJobComponent } from './toxicity-job.component';
+import { RelativeRatingJobComponent } from './relative-rating-job.component';
 
-describe('ToxicityJobComponent', () => {
-  let component: ToxicityJobComponent;
-  let fixture: ComponentFixture<ToxicityJobComponent>;
+describe('RelativeRatingJobComponent', () => {
+  let component: RelativeRatingJobComponent;
+  let fixture: ComponentFixture<RelativeRatingJobComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ToxicityJobComponent ]
+      declarations: [ RelativeRatingJobComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ToxicityJobComponent);
+    fixture = TestBed.createComponent(RelativeRatingJobComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

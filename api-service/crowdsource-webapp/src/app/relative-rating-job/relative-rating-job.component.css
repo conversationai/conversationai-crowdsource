@@ -1,4 +1,3 @@
-
 .text-header {
   font-weight: bold;
 }
@@ -21,28 +20,12 @@
   font-size: 80%;
 }
 
-.questions {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.three-question-group {
+.question-group {
   margin: 10px;
 }
 
-.label-heading{
+.label-heading {
   font-weight: bold;
-}
-
-.example-form {
-  min-width: 150px;
-  max-width: 500px;
-  width: 100%;
-}
-
-.example-full-width {
-  width: 100%;
 }
 
 .errorMessage {

@@ -1,5 +1,4 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<h1>Toxicity Job</h1>
+<h1>Comparative Toxicity Job</h1>
 
 <div class="counts" *ngIf="notEmbedded">
   <div>my worker id: {{userNonce}}</div>
@@ -29,7 +28,7 @@
   <div class="text-header">Comment 2</div>
   <div class="text">{{question.comment_b}}</div>
 
-  <div class="three-question-group">
+  <div class="question-group">
     <mat-radio-group [(ngModel)]="toxicityOption">
       <div class="toxicity-selected-value"><span class="label-heading">How does comment 1 compare to comment 2?</span></div>
       <div *ngFor="let option of toxicityOptions">
