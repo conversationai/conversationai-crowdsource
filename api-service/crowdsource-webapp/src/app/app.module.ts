@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ToxicityJobComponent } from './toxicity-job/toxicity-job.component';
 import { BaseJobComponent } from './base-job/base-job.component';
-import { RelativeRatingJobComponent } from './relative-rating-job/relative-rating-job.component';
+import { RelativeToxicityJobComponent } from './relative-toxicity-job/relative-toxicity-job.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // tslint:disable-next-line: max-line-length
 import { MatAutocompleteModule, MatButtonModule, MatButtonToggleModule, MatCardModule, MatCheckboxModule, MatChipsModule, MatDatepickerModule, MatDialogModule, MatExpansionModule, MatGridListModule, MatIconModule, MatInputModule, MatListModule, MatMenuModule, MatNativeDateModule, MatPaginatorModule, MatProgressBarModule, MatProgressSpinnerModule, MatRadioModule, MatRippleModule, MatSelectModule, MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule, MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule } from '@angular/material';
@@ -19,7 +19,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     AppComponent,
     ToxicityJobComponent,
     BaseJobComponent,
-    RelativeRatingJobComponent,
+    RelativeToxicityJobComponent,
   ],
   imports: [
     // This must be first.

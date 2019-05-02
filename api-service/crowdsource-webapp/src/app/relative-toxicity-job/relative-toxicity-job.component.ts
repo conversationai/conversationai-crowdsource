@@ -17,7 +17,7 @@ enum ToxicityOption {
   MUCH_LESS_TOXIC = 'much less toxic'
 }
 
-interface RelativeRatingQuestion {
+interface RelativeToxicityQuestion {
   id_a: string;
   id_b: string;
   comment_a: string;
@@ -25,7 +25,7 @@ interface RelativeRatingQuestion {
 }
 
 interface ScaleItem {
-  text: string;
+  text?: string;
   disabled: boolean;
   label?: string;
   selected?: boolean;
@@ -33,11 +33,11 @@ interface ScaleItem {
 }
 
 @Component({
-  selector: 'app-relative-rating-job',
-  templateUrl: './relative-rating-job.component.html',
-  styleUrls: ['./relative-rating-job.component.css']
+  selector: 'app-relative-toxicity-job',
+  templateUrl: './relative-toxicity-job.component.html',
+  styleUrls: ['./relative-toxicity-job.component.css']
 })
-export class RelativeRatingJobComponent extends BaseJobComponent<RelativeRatingQuestion> {
+export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxicityQuestion> {
   @Input() routerPath = '/relative_rating_job';
   @Input() useRadioButtons = false;
   toxicityOption: ToxicityOption;
@@ -69,6 +69,7 @@ export class RelativeRatingJobComponent extends BaseJobComponent<RelativeRatingQ
       {scaleInfo: ToxicityOption.LESS_TOXIC, disabled: true},
       {scaleInfo: ToxicityOption.SLIGHTLY_LESS_TOXIC, disabled: true},
       {
+        text: this.question.comment_b,
         scaleInfo: ToxicityOption.ABOUT_THE_SAME,
         disabled: true,
         selected: true

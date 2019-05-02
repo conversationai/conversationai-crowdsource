@@ -44,12 +44,6 @@
     </div>
 
     <ng-template #dragAndDrop>
-      <div class="commentContainer">
-        <div class="commentB">
-          <div class="itemLabel">commentB</div>
-          <div>{{question.comment_b}}</div>
-        </div>
-      </div>
       <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
         <div class="example-box"
              *ngFor="let item of sample"
@@ -62,8 +56,13 @@
              cdkDrag [cdkDragDisabled]="true">
           <div class="commentBox">
             <div class="itemLabel">{{item.label}}</div>
-            <div>{{item.text}}</div>
-            <div>{{item.scaleInfo}}</div>
+            <div *ngIf="item.text; else scaleInfo">
+              <div class="itemLabel">commentB</div>
+              <div>{{item.text}}</div>
+            </div>
+            <ng-template #scaleInfo>
+              <div>{{item.scaleInfo}}</div>
+            </ng-template>
           </div>
         </div>
       </div>

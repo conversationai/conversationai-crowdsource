@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Params, ParamMap, Router } from '@angular/router';
 import {
-  CommentQuestion,
   CrowdsourceApiService,
   JobQualitySummary,
   WorkToDo,
@@ -71,8 +70,6 @@ export class BaseJobComponent<T> implements OnInit {
   // requests from the browser's prespective.
   local_sent_count = 0;
 
-  testData: WorkToDo<T>[];
-
   constructor(private router: Router,
     private route: ActivatedRoute,
     private crowdSourceApiService: CrowdsourceApiService) { }
@@ -116,10 +113,6 @@ export class BaseJobComponent<T> implements OnInit {
   // Override this in subclasses to send the job-specific answer.
   public buildAnswer(): {} {
     return { foo: 'bar' };
-  }
-
-  setTestData(data: WorkToDo<T>[]): void {
-    this.testData = data;
   }
 
   updateIds(params: ParamMap): void {
@@ -202,11 +195,6 @@ export class BaseJobComponent<T> implements OnInit {
     this.loading = true;
     this.question = null;
 
-    if (this.testData) {
-      console.log('Using test data', this.testData);
-      this.chooseRandomWorkToDo(this.testData);
-      return;
-    }
     if (this.clientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
       this.crowdSourceApiService.getWorkToDoForQuestion<T>(
