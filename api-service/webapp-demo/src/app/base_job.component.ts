@@ -77,7 +77,7 @@ export class BaseJobComponent implements OnInit {
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
-    const query = document!.location!.search!.substr(1);
+    const query = document.location.search.substr(1);
     const embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
       this.notEmbedded = !(embedded_query[1] === 'true');
