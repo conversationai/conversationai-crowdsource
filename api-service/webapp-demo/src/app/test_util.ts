@@ -25,7 +25,7 @@ export function setupQuestionMocks(httpMock: HttpTestingController,
                                    clientJobKey: string,
                                    fixture: ComponentFixture<any>) {
   // Verify the call to load a question.
-  httpMock.expectOne('/api/work/' + clientJobKey).flush([{
+  httpMock.expectOne(`/client_jobs/${clientJobKey}/next10_unanswered_questions`).flush([{
     question_id: 'foo',
     question: {id: 'bar', text: 'Hello world!'},
     answers_per_question: 10,

@@ -75,17 +75,22 @@ class ActivatedRouteStub {
 // to "flush" the controller so that we don't have to check the job_quality
 // and worker quality calls are made in every test where we want to use
 // verify().
-function verifyQualityApiCalls(httpMock: HttpTestingController) {
+function verifyQualityApiCalls(httpMock: HttpTestingController, clientJobKey = 'testJobKey') {
   // Verify job quality call.
-  httpMock.expectOne('/api/job_quality').flush({
+  httpMock.expectOne(`/client_jobs/${clientJobKey}/quality_summary`).flush({
     toanswer_count: 50,
     toanswer_mean_score: 2
   });
 
   // Verify worker quality call.
   httpMock.expectOne((req: HttpRequest<any>): boolean => {
-    const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
+    const workerQualityRequestUrlRegExp = /\/client_jobs\/(.*)\/workers\/.*\/quality_summary/;
     const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
+    console.log('request', req);
+    if (match === null) {
+      return false;
+    }
+    expect(match[1]).toEqual(clientJobKey);
     return match !== null;
   }).flush({
     answer_count: 20,
@@ -150,7 +155,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -178,7 +183,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -205,7 +210,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Loading the first question.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -225,16 +230,16 @@ describe('BaseComponent', () => {
       clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
-    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
 
+    const userNonce = fixture.componentInstance.myJobComponent.userNonce;
+    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;
     }).flush({});
 
     // A new question should load after sending the score.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'testing',
       question: {id: 'abc', text: 'New question!'},
       answers_per_question: 10,
@@ -264,11 +269,11 @@ describe('BaseComponent', () => {
     // such that we can check the exact error message sent (currently it nests
     // the text passed inside an error object, different from the
     // HttpErrorResponse the code gets outside of tests.
-    httpMock.expectOne('/api/work/testJobKey').error(new ErrorEvent('Oh no!'));
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
-      'Http failure response for /api/work/testJobKey');
+      'Http failure response for /client_jobs/testJobKey/next10_unanswered_questions');
 
     verifyQualityApiCalls(httpMock);
 
@@ -286,7 +291,7 @@ describe('BaseComponent', () => {
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -306,13 +311,12 @@ describe('BaseComponent', () => {
 
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;
     }).error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
-      'Http failure response for /api/answer/testJobKey');
+      'Http failure response for /client_jobs/testJobKey/questions/foo/answers/');
 
     // No new question was loaded since there was an error.
     expect(fixture.nativeElement.textContent).toContain('foo');

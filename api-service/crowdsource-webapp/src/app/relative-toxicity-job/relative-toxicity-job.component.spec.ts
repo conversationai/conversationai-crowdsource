@@ -14,7 +14,6 @@ import { ActivatedRouteStub } from '../activated-route-stub';
 
 import { RelativeToxicityJobComponent } from './relative-toxicity-job.component';
 
-
 describe('RelativeToxicityJobComponent', () => {
   let component: RelativeToxicityJobComponent;
   let fixture: ComponentFixture<RelativeToxicityJobComponent>;
