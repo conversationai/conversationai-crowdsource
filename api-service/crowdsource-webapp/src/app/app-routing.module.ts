@@ -11,7 +11,7 @@ const routes: Routes = [
   {path: '', redirectTo: 'toxicity_job/600-dawid-skene-high-diffs', pathMatch: 'full'},
   {path: 'relative_toxicity_job/:clientJobKey', component: RelativeToxicityJobComponent},
   {
-    path: 'relative_rating_job',
+    path: 'relative_toxicity_job',
     redirectTo: 'relative_toxicity_job/wikipedia_relative_rating_pairs',
     pathMatch: 'full'
   },

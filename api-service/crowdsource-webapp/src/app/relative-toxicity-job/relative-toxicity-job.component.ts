@@ -38,7 +38,7 @@ interface ScaleItem {
   styleUrls: ['./relative-toxicity-job.component.css']
 })
 export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxicityQuestion> {
-  @Input() routerPath = '/relative_rating_job';
+  @Input() routerPath = '/relative_toxicity_job';
   @Input() useRadioButtons = false;
   toxicityOption: ToxicityOption;
   toxicityOptions: ToxicityOption[] =
