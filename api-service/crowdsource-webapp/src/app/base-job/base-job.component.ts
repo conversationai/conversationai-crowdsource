@@ -191,6 +191,7 @@ export class BaseJobComponent<T> implements OnInit {
   }
 
   getNextWorkItem() {
+    console.log('getNextWorkItem()');
     this.resetQuestionUI();
     this.loading = true;
     this.question = null;
