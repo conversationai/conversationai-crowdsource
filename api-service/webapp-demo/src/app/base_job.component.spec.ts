@@ -231,8 +231,8 @@ describe('BaseComponent', () => {
       questionId: 'foo'
     };
 
-    const userNonce = fixture.componentInstance.myJobComponent.userNonce;
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
+    // TODO: Why does the userNonce not appear in the URL here?
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
       return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;
@@ -309,6 +309,7 @@ describe('BaseComponent', () => {
 
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
 
+    // TODO: Why does the userNonce not appear in the URL here?
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
       return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;

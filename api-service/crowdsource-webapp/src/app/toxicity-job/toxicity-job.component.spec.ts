@@ -18,10 +18,7 @@ describe('ToxicityJobComponent', () => {
   let fixture: ComponentFixture<ToxicityJobComponent>;
   let activatedRoute: ActivatedRouteStub;
 
-  console.log('Start of test ToxicityJobComponent');
-
   beforeEach(async(() => {
-    console.log('beforeEach: Start of test ToxicityJobComponent');
     activatedRoute = new ActivatedRouteStub();
     activatedRoute.testParams = {
       clientJobKey: 'testJobKey'
@@ -58,14 +55,12 @@ describe('ToxicityJobComponent', () => {
   }));
 
   beforeEach(() => {
-    console.log('in before each');
     fixture = TestBed.createComponent(ToxicityJobComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    console.log('in should create');
     expect(component).toBeTruthy();
   });
 });
