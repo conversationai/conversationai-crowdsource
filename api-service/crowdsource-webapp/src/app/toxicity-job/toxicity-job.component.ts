@@ -1,5 +1,6 @@
-import {Component, Input} from '@angular/core';
-import {BaseJobComponent} from '../base-job/base-job.component';
+import { Component, Input } from '@angular/core';
+import { BaseJobComponent } from '../base-job/base-job.component';
+import { CommentQuestion } from '../crowdsource-api.service';
 
 interface TestJobCrowdSourceAnswer {
   readableAndInEnglish: string;
@@ -20,7 +21,7 @@ const NO = 'no';
   templateUrl: './toxicity-job.component.html',
   styleUrls: ['./toxicity-job.component.css']
 })
-export class ToxicityJobComponent extends BaseJobComponent {
+export class ToxicityJobComponent extends BaseJobComponent<CommentQuestion> {
   @Input() routerPath = '/toxicity_job';
 
   readableAndInEnglish: boolean;

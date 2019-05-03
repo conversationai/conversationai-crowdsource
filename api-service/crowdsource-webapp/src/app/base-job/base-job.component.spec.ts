@@ -6,6 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HttpRequest } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ParamMapStub } from '../param-map-stub';
+import { ActivatedRouteStub } from '../activated-route-stub';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatRadioModule } from '@angular/material/radio';
 
 import {
   HttpClientTestingModule,
@@ -14,7 +18,7 @@ import {
 import { By } from '@angular/platform-browser';
 import { BehaviorSubject } from 'rxjs';
 import { BaseJobComponent } from './base-job.component';
-import { CrowdsourceApiService } from '../crowdsource-api.service';
+import { CrowdsourceApiService, CommentQuestion } from '../crowdsource-api.service';
 
 // A simple Component that extends BaseJobComponent.
 @Component({
@@ -24,7 +28,7 @@ import { CrowdsourceApiService } from '../crowdsource-api.service';
     <button id="sendScoreButton" (click)="sendScoreToApi()">Send score</button>
   `
 })
-class MyJobComponent extends BaseJobComponent {
+class MyJobComponent extends BaseJobComponent<CommentQuestion> {
   clientJobKey = 'testJobKey';
   questionId = 'fooQuestion';
   routerPath = '/my_job';
@@ -41,26 +45,10 @@ class BaseJobTestComponent {
 // Test component wrapper for MyJobComponent.
 @Component({
   selector: 'app-base-job-extended-test',
-  template: '<my-job></my-job>',
+  template: '<app-my-job></app-my-job>',
 })
 class BaseJobExtendedTestComponent {
   @ViewChild(MyJobComponent) myJobComponent: MyJobComponent;
-}
-
-// Stub for ActivatedRoute.
-@Injectable()
-class ActivatedRouteStub {
-  private paramsSubject = new BehaviorSubject(this.testParams);
-  paramMap = this.paramsSubject.asObservable();
-
-  private stubTestParams: ParamMap;
-  get testParams() {
-    return this.stubTestParams;
-  }
-  set testParams(params: {}) {
-    this.stubTestParams = new ParamMapStub(params);
-    this.paramsSubject.next(this.stubTestParams);
-  }
 }
 
 // TODO(rachelrosen): Currently we have to expect every http call in order to
@@ -68,17 +56,19 @@ class ActivatedRouteStub {
 // to "flush" the controller so that we don't have to check the job_quality
 // and worker quality calls are made in every test where we want to use
 // verify().
-function verifyQualityApiCalls(httpMock: HttpTestingController) {
+function verifyQualityApiCalls(httpMock: HttpTestingController, clientJobKey: string) {
   // Verify job quality call.
-  httpMock.expectOne('/api/job_quality').flush({
+  httpMock.expectOne(`/client_jobs/${clientJobKey}/quality_summary`).flush({
     toanswer_count: 50,
     toanswer_mean_score: 2
   });
 
   // Verify worker quality call.
   httpMock.expectOne((req: HttpRequest<any>): boolean => {
-    const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
+    const workerQualityRequestUrlRegExp = /\/client_jobs\/(.*)\/workers\/.*\/quality_summary/;
     const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
+    console.log('request', req);
+    expect(match[1]).toEqual(clientJobKey);
     return match !== null;
   }).flush({
     answer_count: 20,
@@ -97,6 +87,9 @@ describe('BaseComponent', () => {
         HttpClientModule,
         HttpClientTestingModule,
         FormsModule,
+        MatIconModule,
+        MatSlideToggleModule,
+        MatRadioModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes(
           [
@@ -125,6 +118,11 @@ describe('BaseComponent', () => {
   }));
 
   it('should create the component', async(() => {
+    // Manually update the url params.
+    activatedRoute.testParams = {
+      clientJobKey: 'testJobKey',
+      questionId: 'foo'
+    };
     const fixture = TestBed.createComponent(BaseJobTestComponent);
     const element = fixture.debugElement.componentInstance;
     expect(element).toBeTruthy();
@@ -143,7 +141,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -154,7 +152,7 @@ describe('BaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('foo');
     expect(fixture.nativeElement.textContent).toContain('Hello world!');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
@@ -171,7 +169,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -182,7 +180,7 @@ describe('BaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('foo');
     expect(fixture.nativeElement.textContent).toContain('Hello world!');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
@@ -198,7 +196,7 @@ describe('BaseComponent', () => {
     fixture.detectChanges();
 
     // Loading the first question.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -208,7 +206,7 @@ describe('BaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('foo');
     expect(fixture.nativeElement.textContent).toContain('First question');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
@@ -218,16 +216,16 @@ describe('BaseComponent', () => {
       clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
+    const userNonce = fixture.componentInstance.myJobComponent.userNonce;
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
-
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/${userNonce}`
+        ;
     }).flush({});
 
     // A new question should load after sending the score.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'testing',
       question: {id: 'abc', text: 'New question!'},
       answers_per_question: 10,
@@ -238,7 +236,7 @@ describe('BaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('testing');
     expect(fixture.nativeElement.textContent).toContain('New question!');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
@@ -257,13 +255,14 @@ describe('BaseComponent', () => {
     // such that we can check the exact error message sent (currently it nests
     // the text passed inside an error object, different from the
     // HttpErrorResponse the code gets outside of tests.
-    httpMock.expectOne('/api/work/testJobKey').error(new ErrorEvent('Oh no!'));
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions')
+      .error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessages[0]).toContain(
-      'Http failure response for /api/work/testJobKey');
+      'Http failure response for /client_jobs/testJobKey/next10_unanswered_questions');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
@@ -279,7 +278,7 @@ describe('BaseComponent', () => {
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -290,22 +289,24 @@ describe('BaseComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('foo');
     expect(fixture.nativeElement.textContent).toContain('First question');
 
-    verifyQualityApiCalls(httpMock);
+    verifyQualityApiCalls(httpMock, 'testJobKey');
 
     // Verify no outstanding requests.
     httpMock.verify();
 
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
 
+    const userNonce = fixture.componentInstance.myJobComponent.userNonce;
+
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/${userNonce}`;
     }).error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessages[0]).toContain(
-      'Http failure response for /api/answer/testJobKey');
+      `Http failure response for ` +
+      `/client_jobs/testJobKey/questions/foo/answers/${userNonce}`);
 
     // No new question was loaded since there was an error.
     expect(fixture.nativeElement.textContent).toContain('foo');

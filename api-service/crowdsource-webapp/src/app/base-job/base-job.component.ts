@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Params, ParamMap, Router } from '@angular/router';
 import {
-  CommentQuestion,
   CrowdsourceApiService,
   JobQualitySummary,
   WorkToDo,
@@ -46,7 +45,7 @@ interface JobAndQuestionUrlParams {
   selector: 'app-base-job',
   templateUrl: './base-job.component.html',
 })
-export class BaseJobComponent implements OnInit {
+export class BaseJobComponent<T> implements OnInit {
   @Input() clientJobKey: string;
   @Input() routerPath = '/base_job';
 
@@ -55,9 +54,9 @@ export class BaseJobComponent implements OnInit {
 
   notEmbedded = true;
 
-  selectedWork: WorkToDo;
+  selectedWork: WorkToDo<T>;
   questionId: string | null = null;
-  question: CommentQuestion | null;
+  question: T | null;
 
   loading: boolean;
 
@@ -77,7 +76,7 @@ export class BaseJobComponent implements OnInit {
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
-    const query = document.location.search.substr(1)
+    const query = document.location.search.substr(1);
     const embedded_query = /embedded=(true|false)/g.exec(query);
     if (embedded_query) {
       this.notEmbedded = !(embedded_query[1] === 'true');
@@ -168,7 +167,12 @@ export class BaseJobComponent implements OnInit {
         });
   }
 
-  chooseRandomWorkToDo(data: WorkToDo[]): void {
+  chooseRandomWorkToDo(data: WorkToDo<T>[]): void {
+    if (data.length === 0) {
+      console.error('Data length is 0 in chooseRandomWorkToDo()');
+      return;
+    }
+    console.log(data);
     const randomItemIndex = getRandomInt(0, data.length - 1);
 
     this.selectedWork = data[randomItemIndex];
@@ -179,20 +183,25 @@ export class BaseJobComponent implements OnInit {
     }
 
     this.updateUrl();
+    this.updateQuestion();
+  }
+
+  protected updateQuestion(): void {
     this.question = this.selectedWork.question;
   }
 
   getNextWorkItem() {
+    console.log('getNextWorkItem()');
     this.resetQuestionUI();
     this.loading = true;
     this.question = null;
 
     if (this.clientJobKey && this.questionId) {
       // If url specifies job id and question id, get that specific question.
-      this.crowdSourceApiService.getWorkToDoForQuestion(
+      this.crowdSourceApiService.getWorkToDoForQuestion<T>(
         this.clientJobKey, this.questionId)
         .subscribe(
-          (workToDo: WorkToDo) => {
+          (workToDo: WorkToDo<T>) => {
             this.chooseRandomWorkToDo([workToDo]);
           },
           (e) => {
@@ -200,9 +209,9 @@ export class BaseJobComponent implements OnInit {
             this.errorMessages.push(e.message);
           });
     } else {
-      this.crowdSourceApiService.getWorkToDo(this.clientJobKey)
+      this.crowdSourceApiService.getWorkToDo<T>(this.clientJobKey)
         .subscribe(
-          (workItemsToDo: WorkToDo[]) => {
+          (workItemsToDo: WorkToDo<T>[]) => {
             this.chooseRandomWorkToDo(workItemsToDo);
           },
           (e) => {

@@ -50,23 +50,29 @@ class IdentityCategoryHateJobTestComponent {
   }
 }
 
-function verifyQualityApiCalls(httpMock: HttpTestingController) {
+function verifyQualityApiCalls(httpMock: HttpTestingController, clientJobKey = 'testJobKey') {
   // Verify job quality call.
-  httpMock.expectOne('/api/job_quality').flush({
+  httpMock.expectOne(`/client_jobs/${clientJobKey}/quality_summary`).flush({
     toanswer_count: 50,
     toanswer_mean_score: 2
   });
 
   // Verify worker quality call.
   httpMock.expectOne((req: HttpRequest<any>): boolean => {
-    const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
+    const workerQualityRequestUrlRegExp = /\/client_jobs\/(.*)\/workers\/.*\/quality_summary/;
     const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
+    console.log('request', req);
+    if (match === null) {
+      return false;
+    }
+    expect(match[1]).toEqual(clientJobKey);
     return match !== null;
   }).flush({
     answer_count: 20,
     mean_score: 1.5
   });
 }
+
 
 function changeToTab(tabNumber: number, fixture: ComponentFixture<IdentityCategoryHateJobTestComponent>) {
   const tabs = fixture.debugElement.query(By.css('#tabGroup')).componentInstance;

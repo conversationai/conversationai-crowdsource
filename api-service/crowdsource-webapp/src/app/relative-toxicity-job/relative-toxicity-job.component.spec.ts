@@ -1,21 +1,22 @@
-import { async, inject, ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CrowdsourceApiService } from '../crowdsource-api.service';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ActivatedRouteStub } from '../activated-route-stub';
 
-import { ToxicityJobComponent } from './toxicity-job.component';
+import { RelativeToxicityJobComponent } from './relative-toxicity-job.component';
 
-describe('ToxicityJobComponent', () => {
-  let component: ToxicityJobComponent;
-  let fixture: ComponentFixture<ToxicityJobComponent>;
+describe('RelativeToxicityJobComponent', () => {
+  let component: RelativeToxicityJobComponent;
+  let fixture: ComponentFixture<RelativeToxicityJobComponent>;
   let activatedRoute: ActivatedRouteStub;
 
   beforeEach(async(() => {
@@ -24,38 +25,39 @@ describe('ToxicityJobComponent', () => {
       clientJobKey: 'testJobKey'
     };
     TestBed.configureTestingModule({
-      declarations: [ ToxicityJobComponent ],
+      declarations: [ RelativeToxicityJobComponent ],
       imports: [
+        DragDropModule,
         FormsModule,
         HttpClientTestingModule,
         MatCheckboxModule,
-        MatIconModule,
         MatFormFieldModule,
+        MatIconModule,
         MatRadioModule,
         MatSlideToggleModule,
         RouterTestingModule.withRoutes(
           [
               {
-                path: 'toxicity_job',
-                component: ToxicityJobComponent
+                path: 'relative_toxicity_job',
+                component: RelativeToxicityJobComponent
               },
               {
-                path: 'toxicity_job/:clientJobKey',
-                component: ToxicityJobComponent
+                path: 'relative_toxicity_job/:clientJobKey',
+                component: RelativeToxicityJobComponent
               },
           ]
         )
       ],
       providers: [
         {provide: ActivatedRoute, useValue: activatedRoute},
-        CrowdsourceApiService,
+        CrowdsourceApiService
       ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ToxicityJobComponent);
+    fixture = TestBed.createComponent(RelativeToxicityJobComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
