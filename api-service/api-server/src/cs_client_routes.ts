@@ -102,16 +102,16 @@ export function setup(app : express.Express,
       res.status(httpcodes.BAD_REQUEST).send(JSON.stringify({ error: 'no body' }));
       return;
     }
-    let answerToQuestion : crowdsourcedb.AnswerToQuestion = req.body;
-    answerToQuestion.client_job_key = req.params.client_job_key;
-    answerToQuestion.question_id = req.params.question_id;
-    answerToQuestion.worker_nonce = req.params.worker_nonce;
-    if (!answerToQuestion.answer_id) {
-      answerToQuestion.answer_id = null;
+    let answerToQuestion : crowdsourcedb.AnswerToQuestion = {
+      client_job_key: req.params.client_job_key,
+      question_id: req.params.question_id,
+      worker_nonce: req.params.worker_nonce,
+      answer_id: req.params.answer_id,
+      answer: req.body,
     }
     try {
       await crowdsourcedb.addAnswer(answerToQuestion);
-      console.log('Answer added.');
+      console.log(`Answer added: ${JSON.stringify(answerToQuestion)}`);
       res.status(httpcodes.OK).send(JSON.stringify({ result: 'Answer added' }));
     } catch(e) {
       console.error('Error: Cannot add answer: ', e);
