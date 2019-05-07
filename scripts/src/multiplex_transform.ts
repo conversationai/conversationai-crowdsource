@@ -23,44 +23,55 @@ depending on some aspect of the input chunk.
 import * as stream from 'stream';
 
 type ChunkFn = (
-  chunk: string, encoding: string,
-  pushFn : (streamName: string,
-            chunk: string,
-            encoding?: string,
-            callback?: () => void)
-           => void)
-  => void;
+  chunk: string,
+  encoding: string,
+  pushFn: (
+    streamName: string,
+    chunk: string,
+    encoding?: string,
+    callback?: () => void
+  ) => void
+) => void;
 
 // Safe multiplexing from input stream to many output streams.
 // This class will pause and resume the input stream to this transform.
 export class Multiplex extends stream.Transform {
-  public outputStreams: { [streamName: string] : stream.Writable } = {};
-  public finishedPromises: { [streamName: string] : Promise<void> } = {};
-  public fullStreams: { [streamName: string] : null } = {};
+  outputStreams: { [streamName: string]: stream.Writable } = {};
+  finishedPromises: { [streamName: string]: Promise<void> } = {};
+  fullStreams: { [streamName: string]: null } = {};
   // A list of stream transform callback functions (pending being called back)
   private transformCb: Function[] = [];
   private completeCloseFn?: () => void;
-  private inputProcessor: ChunkFn = (chunk: string, encoding: string) => { return {}; };
+  private inputProcessor: ChunkFn = (chunk: string, encoding: string) => ({});
   // defined only when closing.
-  constructor(options?: stream.TransformOptions) { super(options); }
+  constructor(options?: stream.TransformOptions) {
+    super(options);
+  }
 
-  public setInputProcessor(f: ChunkFn) {
+  setInputProcessor(f: ChunkFn) {
     this.inputProcessor = f;
   }
 
   // Only safe to call when not paused.
   checkClose() {
     console.debug('checkClose');
-    if(this.completeCloseFn !== undefined && Object.keys(this.fullStreams).length === 0) {
-      let closeFn = this.completeCloseFn;
+    if (
+      this.completeCloseFn !== undefined &&
+      Object.keys(this.fullStreams).length === 0
+    ) {
+      const closeFn = this.completeCloseFn;
       console.debug('closing.');
       Promise.all(
-        Object.keys(this.finishedPromises).map((streamName) => {
+        Object.keys(this.finishedPromises).map(streamName => {
           this.outputStreams[streamName].end();
           return this.finishedPromises[streamName];
-        }))
-        .then(() => { closeFn(); console.debug('closed.'); })
-        .catch((e) => {
+        })
+      )
+        .then(() => {
+          closeFn();
+          console.debug('closed.');
+        })
+        .catch(e => {
           console.error(e.message);
         });
     }
@@ -68,10 +79,13 @@ export class Multiplex extends stream.Transform {
 
   // Try to resume the input queue; returns true when all output queues not full,
   // i.e. that resume has succeeded.
-  checkResume() : void {
+  checkResume(): void {
     console.debug('checkResume');
-    if (this.transformCb !== undefined && Object.keys(this.fullStreams).length === 0) {
-      for(let cb of this.transformCb) {
+    if (
+      this.transformCb !== undefined &&
+      Object.keys(this.fullStreams).length === 0
+    ) {
+      for (const cb of this.transformCb) {
         cb(undefined);
       }
       this.transformCb = [];
@@ -80,33 +94,48 @@ export class Multiplex extends stream.Transform {
   }
 
   // Must only be called when writable is not full (waiting for drain event).
-  addOutputStream(streamName: string, writable: stream.Writable ) {
+  addOutputStream(streamName: string, writable: stream.Writable) {
     this.outputStreams[streamName] = writable;
     writable.on('drain', () => {
       console.debug('drain: ' + streamName);
       delete this.fullStreams[streamName];
       this.checkResume();
-      this.checkClose()
+      this.checkClose();
     });
-    writable.on('error', (e) => { console.error(`${streamName}: error:` + e.message); });
-    writable.on('close', () => { console.debug(`${streamName}: close`); });
+    writable.on('error', e => {
+      console.error(`${streamName}: error:` + e.message);
+    });
+    writable.on('close', () => {
+      console.debug(`${streamName}: close`);
+    });
     this.finishedPromises[streamName] = new Promise((resolve, reject) => {
-      writable.on('finish', () => { resolve(); console.debug(`${streamName}: finish`); });
+      writable.on('finish', () => {
+        resolve();
+        console.debug(`${streamName}: finish`);
+      });
     });
-    writable.on('pipe', () => { console.debug(`${streamName}: pipe`); });
-    writable.on('unpipe', () => { console.debug(`${streamName}: unpipe`); });
+    writable.on('pipe', () => {
+      console.debug(`${streamName}: pipe`);
+    });
+    writable.on('unpipe', () => {
+      console.debug(`${streamName}: unpipe`);
+    });
   }
 
-  pushToQueue(streamName: string, chunk: Buffer|string|{}, encoding: string,
-      cb: () => void) {
+  pushToQueue(
+    streamName: string,
+    chunk: Buffer | string | {},
+    encoding?: string,
+    cb?: () => void
+  ) {
     this.push(streamName);
-    let isNotFull = this.outputStreams[streamName].write(chunk, encoding, cb);
-    if(!isNotFull) {
+    const isNotFull = this.outputStreams[streamName].write(chunk, encoding, cb);
+    if (!isNotFull) {
       this.fullStreams[streamName] = null;
     }
   }
 
-  _transform(chunk: string, encoding: string, cb: Function) : void {
+  _transform(chunk: string, encoding: string, cb: Function): void {
     this.inputProcessor(chunk, encoding, this.pushToQueue.bind(this));
     if (Object.keys(this.fullStreams).length === 0) {
       cb(undefined);
@@ -117,7 +146,7 @@ export class Multiplex extends stream.Transform {
     }
   }
 
-  _flush(cb: (error?: Error, data?: Buffer|string|{}) => void) : void {
+  _flush(cb: (error?: Error, data?: Buffer | string | {}) => void): void {
     console.debug('_flush');
     this.completeCloseFn = cb;
     this.checkClose();

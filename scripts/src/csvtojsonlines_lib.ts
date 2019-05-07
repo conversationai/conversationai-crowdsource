@@ -16,19 +16,21 @@ limitations under the License.
 import * as csvtojson from 'csvtojson';
 import * as stream from 'stream';
 
-export async function csvtojsonlines(instream: stream.Readable,
-  outstream: stream.Writable): Promise<void> {
+export async function csvtojsonlines(
+  instream: stream.Readable,
+  outstream: stream.Writable
+): Promise<void> {
   const csvToJson = csvtojson();
 
   let lineCount = 0;
 
   const onceDone = new Promise((resolve, reject) => {
-    csvToJson.fromStream(instream)
-      .on('data',
-        (jsonObj: Buffer) => {
-          lineCount++;
-          outstream.write(jsonObj.toString('utf8'));
-        })
+    csvToJson
+      .fromStream(instream)
+      .on('data', (jsonObj: Buffer) => {
+        lineCount++;
+        outstream.write(jsonObj.toString('utf8'));
+      })
       .on('done', (error: Error) => {
         console.log(`lineCount: ${lineCount}`);
         outstream.end();
