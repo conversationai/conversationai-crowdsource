@@ -129,7 +129,11 @@ export class Multiplex extends stream.Transform {
     cb?: () => void
   ) {
     this.push(streamName);
-    const isNotFull = this.outputStreams[streamName].write(chunk, encoding ? encoding : 'utf8', cb);
+    const isNotFull = this.outputStreams[streamName].write(
+      chunk,
+      encoding ? encoding : 'utf8',
+      cb
+    );
     if (!isNotFull) {
       this.fullStreams[streamName] = null;
     }

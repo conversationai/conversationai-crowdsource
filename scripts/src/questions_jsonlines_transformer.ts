@@ -35,6 +35,8 @@ import * as yargs from 'yargs';
 
 import * as multiplex_transform from './multiplex_transform';
 
+// TODO: consider creating a common toxicity-crowdsource-types.ts file for common types.
+
 export interface QuestionPartScores {
   // Optional question: you get scores if you answer it, but you may skip.
   optional?: boolean; // Is not set treated as false.
