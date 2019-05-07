@@ -27,7 +27,7 @@ function verifyBuildsAnswerOnButtonClick(httpMock: HttpTestingController,
                                          buttonId: string,
                                          expectedAnswer: string) {
   activatedRoute.testParams = {
-    customClientJobKey: 'testJobKey'
+    clientJobKey: 'testJobKey'
   };
 
   const fixture = TestBed.createComponent(TestQuestionFilterTestComponent);
@@ -60,7 +60,7 @@ describe('TestQuestionFilterComponent tests', () => {
                 component: TestQuestionFilterComponent
               },
               {
-                path: 'test_question_filter/:customClientJobKey',
+                path: 'test_question_filter/:clientJobKey',
                 component: TestQuestionFilterComponent
               },
           ]

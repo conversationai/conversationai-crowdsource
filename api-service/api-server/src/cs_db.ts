@@ -349,6 +349,10 @@ export class CrowdsourceDB {
           questionaire.answerScore(question.accepted_answers, answerObj);
     }
 
+    if (!answer.answer_id) {
+      answer.answer_id = '';
+    }
+
     // TODO(ldixon): don't allow multiple submission per user?
     let answerRow: db_types.AnswerRow = {
       answer: answerObj,

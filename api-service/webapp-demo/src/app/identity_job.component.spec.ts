@@ -57,7 +57,7 @@ describe('IdentityJobComponent tests', () => {
                 component: IdentityJobComponent
               },
               {
-                path: 'identity_job/:customClientJobKey',
+                path: 'identity_job/:clientJobKey',
                 component: IdentityJobComponent
               },
           ]
@@ -76,7 +76,7 @@ describe('IdentityJobComponent tests', () => {
 
   it('Builds answer with checked identities', async((inject([HttpTestingController], (httpMock: HttpTestingController) => {
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
 
     const fixture = TestBed.createComponent(IdentityJobTestComponent);

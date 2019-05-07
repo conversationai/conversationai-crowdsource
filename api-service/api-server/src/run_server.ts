@@ -20,7 +20,8 @@ let args = process.argv.slice(2);
 let config = JSON.parse(fs.readFileSync(args[0], 'utf8'));
 
 if (process.env['NODE_ENV'] !== 'development' &&
-    process.env['NODE_ENV'] !== 'production') {
+    process.env['NODE_ENV'] !== 'production' &&
+    process.env['NODE_ENV'] !== 'gcloud-vm-production') {
   console.error('The NODE_ENV environment variable must be "development" ' +
     'or "production", but it was: "' + process.env['NODE_ENV'] + '"');
   process.exit(1);
@@ -42,10 +43,10 @@ if (!config.spannerDatabaseName) {
   process.exit(1);
 }
 
-const IS_PRODUCTION : boolean =
-    (process.env['NODE_ENV'] === 'production');
+const IS_GCLOUD_VM_PRODUCTION : boolean =
+    (process.env['NODE_ENV'] === 'gcloud-vm-production');
 
-if(IS_PRODUCTION) {
+if(IS_GCLOUD_VM_PRODUCTION) {
   config.isProduction = true;
   require('@google-cloud/trace-agent').start({
     projectId: config.cloudProjectId

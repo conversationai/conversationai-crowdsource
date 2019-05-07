@@ -52,36 +52,30 @@ export class CrowdSourceApiService {
 
   constructor(private http: HttpClient) {}
 
-  getWorkToDoForQuestion(customClientJobKey: string, questionId: string):
+  getWorkToDoForQuestion(clientJobKey: string, questionId: string):
     Observable<WorkToDo> {
-    return this.http.get('/api/work/' + customClientJobKey + '/' + questionId);
+    return this.http.get<WorkToDo>(`/client_jobs/${clientJobKey}/questions/${questionId}`);
   }
 
-  getWorkToDo(customClientJobKey: string|null): Observable<WorkToDo[]> {
-    if (customClientJobKey) {
+  getWorkToDo(clientJobKey: string): Observable<WorkToDo[]> {
       // If specified job, get next questions for that job.
-      return this.http.get('/api/work/' + customClientJobKey);
-    } else {
-      // Otherwise get questions for this job.
-      return this.http.get('/api/work');
-    }
+      return this.http.get<WorkToDo[]>(`/client_jobs/${clientJobKey}/next10_unanswered_questions`);
   }
 
-  getJobQuality(): Observable<JobQualitySummary> {
-    // CONSIDER: support custom job keys.
-    return this.http.get('/api/job_quality');
+  getJobQuality(clientJobKey: string): Observable<JobQualitySummary> {
+    return this.http.get<JobQualitySummary>(`/client_jobs/${clientJobKey}/quality_summary`);
   }
 
-  getWorkerQuality(userNonce: string) : Observable<WorkerQualitySummary>{
-    return this.http.get('/api/quality/' + userNonce);
+  getWorkerQuality(clientJobKey: string, userNonce: string): Observable<WorkerQualitySummary>{
+    return this.http.get<WorkerQualitySummary>(`/client_jobs/${clientJobKey}/workers/${userNonce}/quality_summary`);
   }
 
-  postAnswer(crowdSourceAnswer: CrowdSourceAnswer, customClientJobKey: string|null):
+  postAnswer(clientJobKey: string, questionId: string, userNonce: string|undefined, crowdSourceAnswer: CrowdSourceAnswer):
       Observable<{}> {
-    let answerPath = '/api/answer';
-    if (customClientJobKey) {
-      answerPath += '/' + customClientJobKey;
+    if (!userNonce) {
+      userNonce = '';
     }
+    const answerPath = `/client_jobs/${clientJobKey}/questions/${questionId}/answers/${userNonce}`;
     return this.http.post(answerPath, crowdSourceAnswer);
   }
 }

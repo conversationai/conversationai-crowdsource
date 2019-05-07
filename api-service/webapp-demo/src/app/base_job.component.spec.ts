@@ -5,6 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { FormsModule, ReactiveFormsModule }   from '@angular/forms';
 import { HttpClientModule, HttpRequest } from '@angular/common/http';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ParamMapStub } from './param_map_stub';
+
 import {
   HttpClientTestingModule,
   HttpTestingController
@@ -26,11 +28,12 @@ import { CrowdSourceApiService } from './crowd_source_api.service';
   selector: 'my-job',
   template: `
     <div *ngIf="question !== null">{{questionId}} {{question.text}}</div>
-    <button id="sendScoreButton" (click)="sendScoreToApi()">Send score</button>
+    <button id="sendScoreButton" (click)="sendScoreToApi(questionId)">Send score</button>
   `
 })
 class MyJobComponent extends BaseJobComponent {
-  customClientJobKey = 'testJobKey';
+  clientJobKey = 'testJobKey';
+  questionId = 'fooQuestion';
   routerPath = '/my_job';
 }
 
@@ -67,45 +70,27 @@ class ActivatedRouteStub {
   }
 }
 
-// A stub class that implements ParamMap.
-class ParamMapStub implements ParamMap {
-  constructor(private params: {[key: string]: string}) {}
-  has(name: string): boolean {
-    return this.params.hasOwnProperty(name);
-  }
-  get(name: string): string | null {
-    return this.params[name];
-  }
-
-  getAll(name: string): string[] {
-    return [this.params[name]];
-  }
-
-  get keys(): string[] {
-    let objKeys = [];
-    for(let key in this.params) {
-      objKeys.push(key);
-    }
-    return objKeys;
-  }
-}
-
 // TODO(rachelrosen): Currently we have to expect every http call in order to
 // be able to call .verify() at the end; investigate if there is another way
 // to "flush" the controller so that we don't have to check the job_quality
 // and worker quality calls are made in every test where we want to use
 // verify().
-function verifyQualityApiCalls(httpMock: HttpTestingController) {
+function verifyQualityApiCalls(httpMock: HttpTestingController, clientJobKey = 'testJobKey') {
   // Verify job quality call.
-  httpMock.expectOne('/api/job_quality').flush({
+  httpMock.expectOne(`/client_jobs/${clientJobKey}/quality_summary`).flush({
     toanswer_count: 50,
     toanswer_mean_score: 2
   });
 
   // Verify worker quality call.
   httpMock.expectOne((req: HttpRequest<any>): boolean => {
-    const workerQualityRequestUrlRegExp = /\/api\/quality\/?(\w+)?/;
+    const workerQualityRequestUrlRegExp = /\/client_jobs\/(.*)\/workers\/.*\/quality_summary/;
     const match = workerQualityRequestUrlRegExp.exec(req.urlWithParams);
+    console.log('request', req);
+    if (match === null) {
+      return false;
+    }
+    expect(match[1]).toEqual(clientJobKey);
     return match !== null;
   }).flush({
     answer_count: 20,
@@ -132,7 +117,7 @@ describe('BaseComponent', () => {
                 component: MyJobComponent
               },
               {
-                path: 'my_job/:customClientJobKey',
+                path: 'my_job/:clientJobKey',
                 component: MyJobComponent
               },
           ]
@@ -164,13 +149,13 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -191,14 +176,14 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
     // Verify the call to load a question/
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'Hello world!'},
       answers_per_question: 10,
@@ -219,13 +204,13 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
     // Loading the first question.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -242,19 +227,19 @@ describe('BaseComponent', () => {
 
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
-    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
 
+    fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
+    // TODO: Why does the userNonce not appear in the URL here?
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;
     }).flush({});
 
     // A new question should load after sending the score.
-    httpMock.expectOne('/api/work/testJobKey').flush([{
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').flush([{
       question_id: 'testing',
       question: {id: 'abc', text: 'New question!'},
       answers_per_question: 10,
@@ -275,7 +260,7 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey'
+      clientJobKey: 'testJobKey'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
@@ -284,11 +269,11 @@ describe('BaseComponent', () => {
     // such that we can check the exact error message sent (currently it nests
     // the text passed inside an error object, different from the
     // HttpErrorResponse the code gets outside of tests.
-    httpMock.expectOne('/api/work/testJobKey').error(new ErrorEvent('Oh no!'));
+    httpMock.expectOne('/client_jobs/testJobKey/next10_unanswered_questions').error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
-      'Http failure response for /api/work/testJobKey');
+      'Http failure response for /client_jobs/testJobKey/next10_unanswered_questions');
 
     verifyQualityApiCalls(httpMock);
 
@@ -300,13 +285,13 @@ describe('BaseComponent', () => {
     (inject([HttpTestingController], (httpMock: HttpTestingController) => {
     // Manually update the url params.
     activatedRoute.testParams = {
-      customClientJobKey: 'testJobKey',
+      clientJobKey: 'testJobKey',
       questionId: 'foo'
     };
     const fixture = TestBed.createComponent(BaseJobExtendedTestComponent);
     fixture.detectChanges();
 
-    httpMock.expectOne('/api/work/testJobKey/foo').flush({
+    httpMock.expectOne('/client_jobs/testJobKey/questions/foo').flush({
       question_id: 'foo',
       question: {id: 'bar', text: 'First question'},
       answers_per_question: 10,
@@ -324,15 +309,15 @@ describe('BaseComponent', () => {
 
     fixture.debugElement.query(By.css('#sendScoreButton')).nativeElement.click();
 
+    // TODO: Why does the userNonce not appear in the URL here?
     // Sending the score.
     httpMock.expectOne((req: HttpRequest<any>): boolean => {
-      return req.urlWithParams === '/api/answer/testJobKey'
-        && req.body.questionId === 'foo';
+      return req.urlWithParams === `/client_jobs/testJobKey/questions/foo/answers/`;
     }).error(new ErrorEvent('Oh no!'));
 
     fixture.detectChanges();
     expect(fixture.componentInstance.myJobComponent.errorMessage).toContain(
-      'Http failure response for /api/answer/testJobKey');
+      'Http failure response for /client_jobs/testJobKey/questions/foo/answers/');
 
     // No new question was loaded since there was an error.
     expect(fixture.nativeElement.textContent).toContain('foo');

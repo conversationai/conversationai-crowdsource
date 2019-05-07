@@ -17,7 +17,7 @@ export class TestQuestionFilterComponent extends BaseJobComponent {
 
   public setUserSelection(testQuestionEval: string) {
     this.testQuestionEval = testQuestionEval;
-    this.sendScoreToApi();
+    this.sendScoreToApi('fooQuestionId');
   }
 
   public buildAnswer(): TestQuestionAnswer {
