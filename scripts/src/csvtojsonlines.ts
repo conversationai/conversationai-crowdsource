@@ -25,30 +25,34 @@ import * as csvtojson from 'csvtojson';
 import * as fs from 'fs';
 import * as stream from 'stream';
 import * as yargs from 'yargs';
-import {csvtojsonlines} from './csvtojsonlines_lib';
+import { csvtojsonlines } from './csvtojsonlines_lib';
 
 // Command line arguments.
 interface Params {
-  infile: string, outfile: string,
+  infile: string;
+  outfile: string;
 }
 
 async function main(args: Params): Promise<void> {
-  let instream = fs.createReadStream(args.infile);
-  let outstream = fs.createWriteStream(
-    args.outfile, {flags: 'w', encoding: 'utf-8'});
+  const instream = fs.createReadStream(args.infile);
+  const outstream = fs.createWriteStream(args.outfile, {
+    flags: 'w',
+    encoding: 'utf-8',
+  });
 
   await csvtojsonlines(instream, outstream);
 }
 
-let args = yargs.option('infile', {describe: 'Input path to CSV file.'})
-  .option('outfile', {describe: 'Path to output JSON-lines to'})
+const args = yargs
+  .option('infile', { describe: 'Input path to CSV file.' })
+  .option('outfile', { describe: 'Path to output JSON-lines to' })
   .demandOption(
     ['infile', 'outfile'],
-    'Please provide at least --infile and --outfile.')
-  .help()
-  .argv;
+    'Please provide at least --infile and --outfile.'
+  )
+  .help().argv;
 
-main(args as any as Params)
+main((args as {}) as Params)
   .then(() => {
     console.log('Success!');
   })
