@@ -29,19 +29,13 @@ bq --project=wikidetox --dataset_id=wikidetox:crowdsourcedb \
 
 */
 
-import {INSPECT_MAX_BYTES} from 'buffer';
 import * as byline from 'byline';
-import {once} from 'cluster';
 import * as fs from 'fs';
-import {write, WriteStream} from 'fs-extra';
-import * as stream from 'stream';
-import {Transform, Writable} from 'stream';
 import * as yargs from 'yargs';
 
-import * as db_types from '../db_types';
-import * as questionaire from '../questionaire';
+import * as questionaire from '../../api-service/api-server/src/questionaire';
 
-import * as multiplex_transform from '../../../../scripts/ts-bin/multiplex_transform';
+import * as multiplex_transform from './multiplex_transform';
 
 // Command line arguments.
 interface Params {
@@ -56,8 +50,8 @@ interface QuestionT1 {
   type: string;
 }
 
-type AnswerPartType = 'insult'|'obscene'|'comments'|'identityHate'|'threat'|
-    'readableAndInEnglish'|'toxic';
+type AnswerPartType = 'insult' | 'obscene' | 'comments' | 'identityHate' | 'threat' |
+  'readableAndInEnglish' | 'toxic';
 
 const ANSWER_PART_TYPES: AnswerPartType[] = [
   'insult', 'obscene', 'comments', 'identityHate', 'threat',
@@ -85,11 +79,11 @@ async function main(args: Params) {
   let interpretStream = new multiplex_transform.Multiplex();
   interpretStream.setEncoding('utf-8');
   interpretStream.setInputProcessor((chunk: string, _encoding: string,
-      pushFn:(streamName: string, data: string, encoding: string) => void) => {
+    pushFn: (streamName: string, data: string, encoding: string) => void) => {
     let questionObj: QuestionT1 = JSON.parse(chunk);
     lineCount += 1;
     let answersObj: questionaire.QuestionScores =
-        JSON.parse(questionObj.accepted_answers);
+      JSON.parse(questionObj.accepted_answers);
 
     let containSomeAnswer = false;
     let outScoringsStreamPause = false;
@@ -113,22 +107,22 @@ async function main(args: Params) {
               continue;
             }
             questionScoring.original_answer_score =
-                questionScoring.answer_score;
+              questionScoring.answer_score;
             questionScoring.answer_score =
-                (questionScoring.answer_score + 1) / 2;
+              (questionScoring.answer_score + 1) / 2;
             if (questionScoring.answer_score !== 0 &&
-                questionScoring.answer_score !== 1) {
+              questionScoring.answer_score !== 1) {
               questionScoring.answer_score = 0.5;
             }
             pushFn(
-                SCORING_STREAM_NAME, `${JSON.stringify(questionScoring)}\n`,
-                'utf-8');
+              SCORING_STREAM_NAME, `${JSON.stringify(questionScoring)}\n`,
+              'utf-8');
           }
         }
 
         if (answerPartCount % 100 === 0) {
           console.log(`Next 100. (answerPartCount: ${
-              answerPartCount}; lineCount: ${lineCount})`);
+            answerPartCount}; lineCount: ${lineCount})`);
         }
 
         if (!(answer_part in answerPartCounts)) {
@@ -140,11 +134,12 @@ async function main(args: Params) {
     }
   });
 
+  let outScoringsStream = fs.createWriteStream(
+    args.out_scorings_file, {flags: 'w', encoding: 'utf-8'});
+  let lineStream = byline.createStream();
+  // Uncomment these lines to also output the questions stream.
   // let outQuestionsStream = fs.createWriteStream(args.out_questions_file,
   //   {flags: 'w', defaultEncoding: 'utf-8'});
-  let outScoringsStream = fs.createWriteStream(
-      args.out_scorings_file, {flags: 'w', encoding: 'utf-8'});
-  let lineStream = byline.createStream();
   // interpretStream.addOutputStream(QUESTION_STREAM_NAME, outQuestionsStream);
   interpretStream.addOutputStream(SCORING_STREAM_NAME, outScoringsStream);
 
@@ -165,9 +160,9 @@ async function main(args: Params) {
 
     completedStream.on('finish', () => {
       console.log(
-          `lineCount: ${lineCount}; answerPartCount: ${answerPartCount}`);
+        `lineCount: ${lineCount}; answerPartCount: ${answerPartCount}`);
       console.log(
-          `answerPartCounts: ${JSON.stringify(answerPartCounts, null, 2)}`);
+        `answerPartCounts: ${JSON.stringify(answerPartCounts, null, 2)}`);
       resolve();
     });
     instream.on('error', (e) => {
@@ -184,18 +179,18 @@ async function main(args: Params) {
 }
 
 let args =
-    yargs.option('infile', {describe: 'Input path to a JSON-lines Questions'})
-        .option(
-            'out_questions_file',
-            {describe: 'Output path for JSON-lines Questions file'})
-        .option(
-            'out_scorings_file',
-            {describe: 'Output path for JSON-lines QuestionScorings file'})
-        .demandOption(
-            ['infile', 'out_scorings_file', 'out_questions_file'],
-            'Please provide at least --infile, --out_questions_file, --out_scorings_file.')
-        .help()
-        .argv;
+  yargs.option('infile', {describe: 'Input path to a JSON-lines Questions'})
+    .option(
+      'out_questions_file',
+      {describe: 'Output path for JSON-lines Questions file'})
+    .option(
+      'out_scorings_file',
+      {describe: 'Output path for JSON-lines QuestionScorings file'})
+    .demandOption(
+      ['infile', 'out_scorings_file', 'out_questions_file'],
+      'Please provide at least --infile, --out_questions_file, --out_scorings_file.')
+    .help()
+    .argv;
 
 let done = false;
 function waiter() {
@@ -208,11 +203,11 @@ function waiter() {
 waiter();
 
 main(args as any as Params)
-    .then(() => {
-      console.log('Success!');
-      done = true;
-    })
-    .catch(e => {
-      console.error('Failed: ', e);
-      process.exit(1);
-    });
+  .then(() => {
+    console.log('Success!');
+    done = true;
+  })
+  .catch(e => {
+    console.error('Failed: ', e);
+    process.exit(1);
+  });

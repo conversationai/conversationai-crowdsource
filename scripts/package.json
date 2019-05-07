@@ -5,6 +5,7 @@
   "version": "0.0.1",
   "license": "Apache-2.0",
   "scripts": {
+    "lint": "tslint --p . -c ./tslint.json",
     "test": "mocha -r ts-node/register ts-bin/*_test.ts"
   },
   "dependencies": {
@@ -15,6 +16,7 @@
     "@types/seedrandom": "^2.4.27",
     "@types/yargs": "^12.0.1",
     "byline": "^5.0.0",
+    "codelyzer": "^5.0.1",
     "concurrently": "^4.0.1",
     "csvtojson": "^2.0.8",
     "json2csv": "^4.3.0",
@@ -28,7 +30,7 @@
     "@types/mocha": "^5.2.5",
     "chai": "^4.2.0",
     "mocha": "^5.0.0",
-    "tslint": "^5.11.0",
+    "tslint": "^5.16.0",
     "typedoc": "^0.13.0",
     "typescript": "^3.1.6"
   }
