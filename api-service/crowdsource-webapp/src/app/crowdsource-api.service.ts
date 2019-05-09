@@ -40,6 +40,14 @@ export interface JobQualitySummary {
   toanswer_mean_score: number;
 }
 
+export interface AnswerSummary<T> {
+  question_id: string;
+  answer_id: string;
+  timestamp: string;
+  worker_nonce: string;
+  answer: T;
+}
+
 @Injectable()
 export class CrowdsourceApiService {
 
@@ -71,5 +79,9 @@ export class CrowdsourceApiService {
     const answerPath = `/client_jobs/${clientJobKey}/questions/${questionId}/answers/${userNonce}`;
     console.log(`answer: ${answer}`);
     return this.http.post(answerPath, answer);
+  }
+
+  getAnswers<T>(clientJobKey: string): Observable<AnswerSummary<T>[]> {
+    return this.http.get<AnswerSummary<T>[]>(`client_jobs/${clientJobKey}/answers`);
   }
 }
