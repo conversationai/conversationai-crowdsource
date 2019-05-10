@@ -1,0 +1,12 @@
+.result {
+  display: flex;
+  flex-direction: row;
+}
+
+.comment {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: auto;
+  margin-bottom: auto;
+}

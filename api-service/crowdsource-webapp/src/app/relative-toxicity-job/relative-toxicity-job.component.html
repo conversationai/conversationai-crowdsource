@@ -10,6 +10,8 @@
     <div>overall_job_mean_score: {{overall_job_mean_score}}</div>
   </div>
 
+  <button mat-raised-button [routerLink]="'/relative_toxicity_job/answers/' + clientJobKey">View Answers</button>
+
   <div *ngIf="errorMessages.length > 0" class="errorMessage">
     <div>
       <div *ngFor="let errorMessage of errorMessages">{{errorMessage}}</div>
@@ -84,7 +86,5 @@
     <div>
       <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
     </div>
-
-    <app-display-answers [clientJobKey]="clientJobKey"></app-display-answers>
   </div>
 </div>
