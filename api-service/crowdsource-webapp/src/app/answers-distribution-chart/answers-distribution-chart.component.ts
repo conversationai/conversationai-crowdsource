@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Params, ParamMap, Router } from '@angular/router';
 import {
   AnswerSummary,
@@ -11,8 +11,7 @@ interface QuestionsToAnswersMap {
   [questionId: string]: AnswerSummary<RelativeToxicityAnswer>[];
 }
 
-const TOXICITY_OPTION_MAP = {
-};
+const TOXICITY_OPTION_MAP = {};
 TOXICITY_OPTION_MAP[ToxicityOption.MUCH_MORE_TOXIC] = 0;
 TOXICITY_OPTION_MAP[ToxicityOption.MORE_TOXIC] = 1;
 TOXICITY_OPTION_MAP[ToxicityOption.SLIGHTLY_MORE_TOXIC] = 2;
@@ -21,12 +20,28 @@ TOXICITY_OPTION_MAP[ToxicityOption.SLIGHTLY_LESS_TOXIC] = 4;
 TOXICITY_OPTION_MAP[ToxicityOption.LESS_TOXIC] = 5;
 TOXICITY_OPTION_MAP[ToxicityOption.MUCH_LESS_TOXIC] = 6;
 
+const BAR_COLORS_MAP = {};
+BAR_COLORS_MAP[ToxicityOption.MUCH_MORE_TOXIC] = '#B71C1C';
+BAR_COLORS_MAP[ToxicityOption.MORE_TOXIC] = '#D32F2F';
+BAR_COLORS_MAP[ToxicityOption.SLIGHTLY_MORE_TOXIC] = '#EF5350';
+BAR_COLORS_MAP[ToxicityOption.ABOUT_THE_SAME] = '#FBC02D';
+BAR_COLORS_MAP[ToxicityOption.SLIGHTLY_LESS_TOXIC] = '#43A047';
+BAR_COLORS_MAP[ToxicityOption.LESS_TOXIC] = '#388E3C';
+BAR_COLORS_MAP[ToxicityOption.MUCH_LESS_TOXIC] = '#2E7D32';
+
+/** Describes a bar in the graph. */
+interface ToxicityOptionSummary {
+  bucketName: ToxicityOption;
+  count: number;
+}
+
 /**
  */
 @Component({
   selector: 'app-answers-distribution-chart',
   templateUrl: './answers-distribution-chart.component.html',
   styleUrls: ['./answers-distribution-chart.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class AnswersDistributionChartComponent implements AfterViewInit {
   @Input() answers: AnswerSummary<RelativeToxicityAnswer>[] = [];
@@ -37,82 +52,72 @@ export class AnswersDistributionChartComponent implements AfterViewInit {
     private crowdSourceApiService: CrowdsourceApiService) { }
 
   ngAfterViewInit(): void {
-    console.log('AfterViewInit in graph component');
     this.renderGraph();
   }
 
-  renderGraph() {
-    let margin = {top: 20, right: 20, bottom: 70, left: 40},
-        width = 600 - margin.left - margin.right,
-        height = 300 - margin.top - margin.bottom;
-
-
-    let x = d3.scaleBand().rangeRound([0, width]).padding(.05);
-    //let x = d3.scaleOrdinal().rangeRoundBands([0, width], .05);
-
-    let y = d3.scaleLinear().range([height, 0]);
-
-    let xAxis = d3.axisBottom(x);
-
-    let yAxis = d3.axisLeft(y)
-        .ticks(10);
-
-    let svg = d3.select(this.chart.nativeElement).append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-        .attr("transform",
-              "translate(" + margin.left + "," + margin.top + ")");
-
-
+  getGraphData(): ToxicityOptionSummary[] {
     const toxicityKeys = Object.keys(TOXICITY_OPTION_MAP);
     const bucketCount = toxicityKeys.length;
     const data = [];
     for (let i = 0; i < bucketCount; i++) {
       data[i] = {bucketName: toxicityKeys[i], count: 0};
     }
-    console.log(data);
     this.answers.forEach((d: AnswerSummary<RelativeToxicityAnswer>) => {
       data[TOXICITY_OPTION_MAP[d.answer.toxicityOption]].count += 1;
     });
+    return data;
+  }
 
-    console.log(data);
+  renderGraph() {
+    const margin = {top: 20, right: 20, bottom: 120, left: 40};
+    const width = 600 - margin.left - margin.right;
+    const height = 300 - margin.top - margin.bottom;
 
-    x.domain(data.map(function(d) {
-      return d.bucketName;
-    }));
-    y.domain([0, d3.max(data, function(d) { return d.count; })]);
+    const x = d3.scaleBand().rangeRound([0, width]).padding(.05);
+    const y = d3.scaleLinear().range([height, 0]);
 
-    svg.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
+    const xAxis = d3.axisBottom(x);
+
+    const data = this.getGraphData();
+    // Sets the ToxicityOptions as the domain of the x axis.
+    x.domain(data.map((d) => d.bucketName));
+    y.domain([0, d3.max(data, (d) =>  d.count )]);
+
+    const svg = d3.select(this.chart.nativeElement).append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+      .append('g')
+        .attr('transform',
+              'translate(' + margin.left + ',' + margin.top + ')');
+
+    svg.append('g')
+        .attr('class', 'xAxis')
+        .attr('transform', 'translate(0,' + height + ')')
         .call(xAxis)
-      .selectAll("text")
-        .style("text-anchor", "end")
-        .attr("dx", "-.8em")
-        .attr("dy", "-.55em")
-        .attr("transform", "rotate(-90)" );
+      .selectAll('text')
+        .style('text-anchor', 'end')
+        .attr('dx', '-.8em')
+        .attr('dy', '-.1em')
+        .attr('transform', 'rotate(-60)' );
 
-    svg.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Value ($)");
-
-    svg.selectAll("bar")
+    svg.selectAll('bar')
       .data(data)
-    .enter().append("rect")
-      .style("fill", "steelblue")
-      .attr("x", function(d) { return x(d.bucketName); })
-      .attr("width", x.bandwidth())
-      .attr("y", function(d) { return y(d.count); })
-      .attr("height", function(d) {
-        return height - y(d.count);
-      });
+    .enter().append('rect')
+      .style('fill', (d) => BAR_COLORS_MAP[d.bucketName])
+      .attr('x', (d) => x(d.bucketName))
+      .attr('width', x.bandwidth())
+      .attr('y', (d) => y(d.count))
+      .attr('height', (d) => height - y(d.count));
+
+    // Adds labels to the bars
+    svg.selectAll('.text')
+      .data(data)
+    .enter().append('text')
+      .attr('class', 'label')
+      .attr('x', (d) => x(d.bucketName) + x.bandwidth() / 2)
+      .attr('y', (d) => y(d.count) + 10)
+      .attr('dy', '.75em')
+      .text((d) => d.count > 0 ? d.count : '');
 
   }
 }

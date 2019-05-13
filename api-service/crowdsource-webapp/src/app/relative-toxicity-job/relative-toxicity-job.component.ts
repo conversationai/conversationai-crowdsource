@@ -42,7 +42,8 @@ interface ScaleItem {
 })
 export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxicityQuestion> {
   @Input() routerPath = '/relative_toxicity_job';
-  @Input() useRadioButtons = false;
+  @Input() useRadioButtons = true;
+  @Input() debugMode = false;
   toxicityOption: ToxicityOption;
   toxicityOptions: ToxicityOption[] =
     Object.keys(ToxicityOption).map(key => ToxicityOption[key]);
@@ -145,6 +146,10 @@ export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxic
 
   getClassName(toxicityOption: ToxicityOption): string {
     return toxicityOption.replace(/ /g, '_');
+  }
+
+  getComparator(): string {
+    return this.getToxicityOption() === ToxicityOption.ABOUT_THE_SAME ? 'as' : 'than';
   }
 
 }

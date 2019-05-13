@@ -1,9 +1,6 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params, ParamMap, Router } from '@angular/router';
-import {
-  AnswerSummary,
-  CrowdsourceApiService,
-} from '../crowdsource-api.service';
+import { AnswerSummary, CrowdsourceApiService } from '../crowdsource-api.service';
 import { RelativeToxicityAnswer } from '../relative-toxicity-job/relative-toxicity-job.component';
 
 interface QuestionsToAnswersMap {
@@ -11,6 +8,7 @@ interface QuestionsToAnswersMap {
 }
 
 /**
+ * Component that displays tea answers for examples in a relative rating task.
  */
 @Component({
   selector: 'app-relative-toxicity-answers-page',
@@ -19,17 +17,16 @@ interface QuestionsToAnswersMap {
 })
 export class RelativeToxicityAnswersPageComponent implements OnInit {
   clientJobKey: string;
-
   answers: AnswerSummary<RelativeToxicityAnswer>[] = [];
   questionsToAnswersMap: QuestionsToAnswersMap = {};
   questionIds: string[] = [];
+  debugMode = false;
 
   constructor(
     private route: ActivatedRoute,
     private crowdSourceApiService: CrowdsourceApiService) { }
 
   ngOnInit(): void {
-    console.log('Init inside answers page component');
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.updateIds(params);
       this.getAnswers();
@@ -69,5 +66,4 @@ export class RelativeToxicityAnswersPageComponent implements OnInit {
             console.error(e);
           });
   }
-
 }
