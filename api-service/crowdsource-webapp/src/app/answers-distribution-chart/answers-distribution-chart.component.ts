@@ -1,9 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Params, ParamMap, Router } from '@angular/router';
-import {
-  AnswerSummary,
-  CrowdsourceApiService,
-} from '../crowdsource-api.service';
+import { AnswerSummary } from '../crowdsource-api.service';
 import { RelativeToxicityAnswer, ToxicityOption } from '../relative-toxicity-job/relative-toxicity-job.component';
 import * as d3 from 'd3';
 
@@ -47,15 +43,11 @@ export class AnswersDistributionChartComponent implements AfterViewInit {
   @Input() answers: AnswerSummary<RelativeToxicityAnswer>[] = [];
   @ViewChild('chart') chart: ElementRef;
 
-  constructor(
-    private route: ActivatedRoute,
-    private crowdSourceApiService: CrowdsourceApiService) { }
-
   ngAfterViewInit(): void {
     this.renderGraph();
   }
 
-  getGraphData(): ToxicityOptionSummary[] {
+  prepareGraphData(): ToxicityOptionSummary[] {
     const toxicityKeys = Object.keys(TOXICITY_OPTION_MAP);
     const bucketCount = toxicityKeys.length;
     const data = [];
@@ -78,7 +70,7 @@ export class AnswersDistributionChartComponent implements AfterViewInit {
 
     const xAxis = d3.axisBottom(x);
 
-    const data = this.getGraphData();
+    const data = this.prepareGraphData();
     // Sets the ToxicityOptions as the domain of the x axis.
     x.domain(data.map((d) => d.bucketName));
     y.domain([0, d3.max(data, (d) =>  d.count )]);
