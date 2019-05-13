@@ -1,0 +1,21 @@
+<mat-slide-toggle [(ngModel)]="debugMode">Debug</mat-slide-toggle>
+<div *ngFor="let questionId of questionIds">
+  <div *ngIf="debugMode">
+    <div>Question id: {{questionId}}</div>
+    <div>
+      Answers:
+      <div *ngFor="let answer of questionsToAnswersMap[questionId]; let i = index;">
+        #{{i}}: {{answer.answer.toxicityOption}}
+      </div>
+    </div>
+  </div>
+  <div class="result">
+    <div class="comment">
+      {{questionsToAnswersMap[questionId][0].answer.comment_a}}
+    </div>
+    <app-answers-distribution-chart [answers]="questionsToAnswersMap[questionId]"></app-answers-distribution-chart>
+    <div class="comment">
+      {{questionsToAnswersMap[questionId][0].answer.comment_b}}
+    </div>
+  </div>
+</div>

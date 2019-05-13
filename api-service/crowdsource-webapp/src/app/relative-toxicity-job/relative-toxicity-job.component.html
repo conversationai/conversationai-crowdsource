@@ -1,14 +1,7 @@
 <div class="container">
-  <h1>Comparative Toxicity Job</h1>
-
-  <div class="counts" *ngIf="notEmbedded">
-    <div>my worker id: {{userNonce}}</div>
-    <div>local_sent_count: {{local_sent_count}}</div>
-    <div>training_answer_count: {{training_answer_count}}</div>
-    <div>user_mean_score: {{user_mean_score}}</div>
-    <div>overall_job_answer_count: {{overall_job_answer_count}}</div>
-    <div>overall_job_mean_score: {{overall_job_mean_score}}</div>
-  </div>
+  <button *ngIf="debugMode"
+          mat-raised-button
+          [routerLink]="'/relative_toxicity_job/answers/' + clientJobKey">View Answers</button>
 
   <div *ngIf="errorMessages.length > 0" class="errorMessage">
     <div>
@@ -22,24 +15,35 @@
   </div>
 
   <div *ngIf="question">
-    <div class="id" *ngIf="notEmbedded">Question Id: <span>{{question.id}}</span></div>
-
-    <div class="experimentToggle">
-      <mat-slide-toggle labelPosition="before "[(ngModel)]="useRadioButtons">Use radio buttons</mat-slide-toggle>
+    <div class="experimentToggle" *ngIf="debugMode">
+      <mat-slide-toggle labelPosition="before" [(ngModel)]="useRadioButtons">Use radio buttons</mat-slide-toggle>
     </div>
 
     <div *ngIf="useRadioButtons; else dragAndDrop">
-      <div class="text-header">Comment A</div>
-      <div class="text">{{question.comment_a}}</div>
-      <div class="text-header">Comment B</div>
-      <div class="text">{{question.comment_b}}</div>
-      <div class="question-group">
-        <div class="toxicity-selected-value">
-          <span class="label-heading">How does comment A compare to comment B?</span>
+      <div class="toxicity-selected-value">
+        <span class="label-heading">How do the coments compare?</span>
+      </div>
+      <div class="row">
+        <div>
+          <div class="text-header">Comment A:</div>
+          <div class="text">{{question.comment_a}}</div>
         </div>
-        <mat-radio-group class="radioGroup" [(ngModel)]="toxicityOption">
-          <mat-radio-button *ngFor="let option of toxicityOptions" class="toxicity-radio-button" [value]="option">{{option}}</mat-radio-button>
-        </mat-radio-group>
+        <div class="comparison">
+          <div class="inline-description">is</div>
+          <div class="question-group">
+            <mat-radio-group class="radioGroup" [(ngModel)]="toxicityOption">
+              <mat-radio-button *ngFor="let option of toxicityOptions"
+                                class="toxicity-radio-button"
+                                [value]="option">{{option}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="inline-description">{{getComparator()}}</div>
+        </div>
+        <div>
+          <div class="text-header">Comment B:</div>
+          <div class="text">{{question.comment_b}}</div>
+        </div>
       </div>
     </div>
 
@@ -79,11 +83,10 @@
       </div>
     </ng-template>
 
-    <div class="description">Comment A is {{getToxicityOption()}} than Comment B</div>
+    <div class="description"><span class="yourRating">Your rating:</span> Comment A is {{getToxicityOption()}} {{getComparator()}} Comment B</div>
 
     <div>
       <button mat-raised-button color="primary" (click)="sendScoreToApi()">Submit</button>
     </div>
-
   </div>
 </div>

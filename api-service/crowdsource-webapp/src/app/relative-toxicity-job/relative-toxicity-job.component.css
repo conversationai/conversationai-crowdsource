@@ -2,14 +2,31 @@
   margin: 20px;
 }
 
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.comparison {
+  display: flex;
+  align-items: center;
+}
+
 .text-header {
-  font-weight: bold;
+  font-weight: 500;
+  text-align: center;
 }
 
 .text {
   padding: 10px;
   border: 1px solid #CCC;
   margin: 10px;
+  display: inline-block;
+  overflow: hidden;
+  max-width: 300px;
+  overflow-wrap: break-word;
 }
 
 .counts {
@@ -26,6 +43,7 @@
 
 .question-group {
   margin: 10px;
+  display: inline-block;
 }
 
 .label-heading {
@@ -150,6 +168,11 @@
   margin-bottom: 20px;
 }
 
+.inline-description {
+  min-width: 100px;
+  text-align: center;
+}
+
 .commentContainer {
   background: #ccc;
   width: 1600px;
@@ -182,11 +205,16 @@
 }
 
 .mat-radio-button ~ .mat-radio-button {
-  margin-left: 16px;
+  margin-top: 4px;
 }
 
 .radioGroup {
   display: flex;
+  flex-direction: column;
   margin-top: 20px;
   margin-bottom: 20px;
+}
+
+.yourRating {
+  font-weight: 500;
 }

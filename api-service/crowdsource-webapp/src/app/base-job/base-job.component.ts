@@ -173,7 +173,7 @@ export class BaseJobComponent<T> implements OnInit {
       return;
     }
     console.log(data);
-    const randomItemIndex = getRandomInt(0, data.length - 1);
+    const randomItemIndex = getRandomInt(0, data.length);
 
     this.selectedWork = data[randomItemIndex];
     this.questionId = this.selectedWork.question_id;

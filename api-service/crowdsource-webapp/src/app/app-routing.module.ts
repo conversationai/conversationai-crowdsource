@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ToxicityJobComponent } from './toxicity-job/toxicity-job.component';
 import { RelativeToxicityJobComponent } from './relative-toxicity-job/relative-toxicity-job.component';
+import { RelativeToxicityAnswersPageComponent } from './relative-toxicity-answers-page/relative-toxicity-answers-page.component';
 
 const routes: Routes = [
   // This path (with no parameters) is needed because paramMap will use the
@@ -12,9 +13,10 @@ const routes: Routes = [
   {path: 'relative_toxicity_job/:clientJobKey', component: RelativeToxicityJobComponent},
   {
     path: 'relative_toxicity_job',
-    redirectTo: 'relative_toxicity_job/wikipedia_relative_rating_pairs',
+    redirectTo: 'relative_toxicity_job/wikipedia_relative_rating_pairs_demo_test',
     pathMatch: 'full'
   },
+  {path: 'relative_toxicity_job/answers/:clientJobKey', component: RelativeToxicityAnswersPageComponent},
 ];
 
 @NgModule({

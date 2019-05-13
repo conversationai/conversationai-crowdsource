@@ -1,0 +1,9 @@
+text.label {
+  fill:white;
+  text-anchor: middle;
+  size: 20px;
+}
+
+.xAxis text {
+  font: 14px sans-serif;
+}

@@ -1,0 +1,17 @@
+.result {
+  display: flex;
+  flex-direction: row;
+  border: 1px solid #000;
+  padding: 20px;
+  justify-content: space-evenly;
+  width: 1000px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.comment {
+  width: 200px;
+  overflow-wrap: break-word;
+  margin-top: auto;
+  margin-bottom: auto;
+}

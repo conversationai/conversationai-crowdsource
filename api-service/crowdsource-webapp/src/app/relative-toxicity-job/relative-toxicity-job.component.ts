@@ -3,11 +3,14 @@ import { BaseJobComponent } from '../base-job/base-job.component';
 import { CommentQuestion } from '../crowdsource-api.service';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
-interface TestJobCrowdSourceAnswer {
+export interface RelativeToxicityAnswer {
   toxicityOption: ToxicityOption;
+  // Store the question for easy access when fetching the answer without
+  // requiring a join.
+  question: RelativeToxicityQuestion;
 }
 
-enum ToxicityOption {
+export enum ToxicityOption {
   MUCH_MORE_TOXIC = 'much more toxic',
   MORE_TOXIC = 'more toxic',
   SLIGHTLY_MORE_TOXIC = 'slightly more toxic',
@@ -39,7 +42,8 @@ interface ScaleItem {
 })
 export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxicityQuestion> {
   @Input() routerPath = '/relative_toxicity_job';
-  @Input() useRadioButtons = false;
+  @Input() useRadioButtons = true;
+  @Input() debugMode = false;
   toxicityOption: ToxicityOption;
   toxicityOptions: ToxicityOption[] =
     Object.keys(ToxicityOption).map(key => ToxicityOption[key]);
@@ -51,19 +55,17 @@ export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxic
   commentBIndex = 0;
 
   public buildAnswer(): {} {
-    if (this.useRadioButtons) {
-      return { toxicityOption: this.toxicityOption };
-    } else {
-      return { toxicityOption: this.getToxicityOption() };
-    }
+    return {
+      comment_a: this.question.comment_a,
+      comment_b: this.question.comment_b,
+      id_a: this.question.id_a,
+      id_b: this.question.id_b,
+      toxicityOption: this.useRadioButtons ? this.toxicityOption : this.getToxicityOption()
+    };
   }
 
   protected updateQuestion(): void {
     super.updateQuestion();
-    // TODO: The data is incorrectly stored in the db as a JSON string instead
-    // of JSON, like it is for the other jobs. We should fix this and then
-    // remove the JSON.parse() here.
-    this.question = JSON.parse(this.question as any as string);
     this.sample = [
       {scaleInfo: ToxicityOption.MUCH_LESS_TOXIC, disabled: true},
       {scaleInfo: ToxicityOption.LESS_TOXIC, disabled: true},
@@ -140,6 +142,10 @@ export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxic
 
   getClassName(toxicityOption: ToxicityOption): string {
     return toxicityOption.replace(/ /g, '_');
+  }
+
+  getComparator(): string {
+    return this.getToxicityOption() === ToxicityOption.ABOUT_THE_SAME ? 'as' : 'than';
   }
 
 }
