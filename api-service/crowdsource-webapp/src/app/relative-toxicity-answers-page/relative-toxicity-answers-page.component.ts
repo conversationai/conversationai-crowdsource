@@ -19,6 +19,7 @@ export class RelativeToxicityAnswersPageComponent implements OnInit {
   clientJobKey: string;
   answers: AnswerSummary<RelativeToxicityAnswer>[] = [];
   questionsToAnswersMap: QuestionsToAnswersMap = {};
+  // Set of questionIds corresponding to the keys in questionsToAnswersMap.
   questionIds: string[] = [];
   debugMode = false;
 
@@ -52,15 +53,15 @@ export class RelativeToxicityAnswersPageComponent implements OnInit {
             this.answers = data;
             this.questionsToAnswersMap = {};
             this.questionIds = [];
+            // Creates a mapping of question id to a list of answers for that
+            // question id.
             this.answers.forEach((answer, index) => {
               if (!this.questionsToAnswersMap[answer.question_id]) {
                 this.questionsToAnswersMap[answer.question_id] = [];
-                this.questionIds.push(answer.question_id);
               }
               this.questionsToAnswersMap[answer.question_id].push(answer);
             });
-            console.log(this.questionIds);
-            console.log(this.questionsToAnswersMap);
+            this.questionIds = Object.keys(this.questionsToAnswersMap);
           },
           (e) => {
             console.error(e);

@@ -28,16 +28,18 @@
           <div class="text-header">Comment A:</div>
           <div class="text">{{question.comment_a}}</div>
         </div>
-        <div class="inline-description">is</div>
-        <div class="question-group">
-          <mat-radio-group class="radioGroup" [(ngModel)]="toxicityOption">
-            <mat-radio-button *ngFor="let option of toxicityOptions"
-                              class="toxicity-radio-button"
-                              [value]="option">{{option}}
-            </mat-radio-button>
-          </mat-radio-group>
+        <div class="comparison">
+          <div class="inline-description">is</div>
+          <div class="question-group">
+            <mat-radio-group class="radioGroup" [(ngModel)]="toxicityOption">
+              <mat-radio-button *ngFor="let option of toxicityOptions"
+                                class="toxicity-radio-button"
+                                [value]="option">{{option}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div class="inline-description">{{getComparator()}}</div>
         </div>
-        <div class="inline-description">{{getComparator()}}</div>
         <div>
           <div class="text-header">Comment B:</div>
           <div class="text">{{question.comment_b}}</div>

@@ -66,10 +66,6 @@ export class RelativeToxicityJobComponent extends BaseJobComponent<RelativeToxic
 
   protected updateQuestion(): void {
     super.updateQuestion();
-    // TODO: The data is incorrectly stored in the db as a JSON string instead
-    // of JSON, like it is for the other jobs. We should fix this and then
-    // remove the JSON.parse() here.
-    // this.question = JSON.parse(this.question as any as string);
     this.sample = [
       {scaleInfo: ToxicityOption.MUCH_LESS_TOXIC, disabled: true},
       {scaleInfo: ToxicityOption.LESS_TOXIC, disabled: true},
