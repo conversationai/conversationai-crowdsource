@@ -59,6 +59,7 @@ export class BaseJobComponent<T> implements OnInit {
   question: T | null;
 
   loading: boolean;
+  done = false;
 
   training_answer_count = 0;
   user_mean_score = 0;
@@ -170,6 +171,7 @@ export class BaseJobComponent<T> implements OnInit {
   chooseRandomWorkToDo(data: WorkToDo<T>[]): void {
     if (data.length === 0) {
       console.error('Data length is 0 in chooseRandomWorkToDo()');
+      this.done = true;
       return;
     }
     console.log(data);
@@ -209,7 +211,7 @@ export class BaseJobComponent<T> implements OnInit {
             this.errorMessages.push(e.message);
           });
     } else {
-      this.crowdSourceApiService.getWorkToDo<T>(this.clientJobKey)
+      this.crowdSourceApiService.getWorkToDo<T>(this.clientJobKey, this.userNonce)
         .subscribe(
           (workItemsToDo: WorkToDo<T>[]) => {
             this.chooseRandomWorkToDo(workItemsToDo);

@@ -221,11 +221,11 @@ export class CrowdsourceDB {
   }
 
   public async getClientJobNextOpenQuestions(
-      client_job_key: string, limit: number): Promise<QuestionToAnswer[]> {
+      client_job_key: string, userNonce: string, limit: number): Promise<QuestionToAnswer[]> {
     db_types.assertClientJobKey(client_job_key)
     const query: spanner.Query = {
       sql: `SELECT q.question_id, q.question, c.answers_per_question,
-              COUNT(a.question_id) as answer_count
+              COUNT(a.question_id) as answer_count, STRING_AGG(a.worker_nonce) as worker_ids
             FROM ClientJobs as c
               JOIN Questions as q
                 ON c.question_group_id = q.question_group_id
@@ -234,16 +234,18 @@ export class CrowdsourceDB {
             WHERE c.client_job_key = "${client_job_key}"
               AND q.type != "training"
             GROUP BY q.question_id, q.question, c.answers_per_question, a.question_id
-            HAVING (answer_count < c.answers_per_question) OR (a.question_id IS NULL)
+            HAVING ((answer_count < c.answers_per_question) OR (a.question_id IS NULL)) AND NOT REGEXP_CONTAINS(worker_ids, "${userNonce}")
             LIMIT ${limit}
             `
     };
+    console.log(query);
     let results: spanner.QueryResult[] = await this.spannerDatabase.run(query);
     if (results.length === 0) {
       throw new NoResultsError('Resulted in empty query response');
     }
     let questionRows =
         results[0].map(row => db_types.parseOutputRow<QuestionToAnswer>(row));
+    console.log(questionRows);
     return questionRows;
   }
 

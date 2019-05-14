@@ -64,10 +64,11 @@ export function setup(app : express.Express,
 
   // If the `:client_job_key` exists, returns a JSON object with 10 questions
   // that still need answers.
-  app.get('/client_jobs/:client_job_key/next10_unanswered_questions', async (req, res) => {
+  app.get('/client_jobs/:client_job_key/:worker_nonce/next10_unanswered_questions', async (req, res) => {
     let questionToAnswer : crowdsourcedb.QuestionToAnswer[];
     try {
-      questionToAnswer = await crowdsourcedb.getClientJobNextOpenQuestions(req.params.client_job_key, 10);
+      questionToAnswer = await crowdsourcedb.getClientJobNextOpenQuestions(
+        req.params.client_job_key, req.params.worker_nonce, 10);
       // TODO(ldixon): fix lying about type.
       res.status(httpcodes.OK).send(JSON.stringify(questionToAnswer, null, 2));
     } catch(e) {
