@@ -23,7 +23,7 @@ served by webpack on http://localhost:4200
 `static/`:
 
   ```bash
-  cp -r dist/* ../api-server/static/
+  cp -r dist/crowdsource-webapp/* ../api-server/static/
   ```
 
   The api-server will serve html from that location.
