@@ -152,7 +152,7 @@ export class BaseJobComponent<T> implements OnInit {
     }
 
     this.crowdSourceApiService.postAnswer(
-        this.clientJobKey, this.questionId, this.userNonce, answer)
+        this.clientJobKey, this.questionId, this.userNonce + ':' + this.local_sent_count, answer)
       .subscribe(
         (data: {}) => {
           this.local_sent_count += 1;
