@@ -19,9 +19,12 @@ const YES = 'Yes';
 const NO = 'No';
 
 interface JobAndQuestionUrlParams {
-  clientJobKey: string;
   questionId?: string;
 }
+
+interface AnsweredQuestions { [questionId: string]: number; }
+
+const answeredQuestionCounts: AnsweredQuestions = {};
 
 /**
  * Base component to inherit from for building custom job components.
@@ -47,7 +50,6 @@ interface JobAndQuestionUrlParams {
 })
 export class BaseJobComponent<T> implements OnInit {
   @Input() clientJobKey: string;
-  @Input() routerPath = '/base_job';
 
   userNonce: string | null;
   errorMessages: string[] = [];
@@ -72,7 +74,7 @@ export class BaseJobComponent<T> implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private crowdSourceApiService: CrowdsourceApiService) { }
+    private crowdSourceApiService: CrowdsourceApiService) {}
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
@@ -128,18 +130,22 @@ export class BaseJobComponent<T> implements OnInit {
     if (!this.clientJobKey) {
       return;
     }
-    const urlParams: JobAndQuestionUrlParams = {
-      clientJobKey: this.clientJobKey,
-    };
+    const urlParams: JobAndQuestionUrlParams = {};
 
     if (this.questionId) {
       urlParams.questionId = this.questionId;
     }
 
-    this.router.navigate([this.routerPath, urlParams]);
+    this.router.navigate([`./`, urlParams], { relativeTo: this.route });
   }
 
   public sendScoreToApi() {
+
+    if (!answeredQuestionCounts[this.questionId]) {
+      answeredQuestionCounts[this.questionId] = 0;
+    }
+    answeredQuestionCounts[this.questionId] += 1;
+
     const answer = this.buildAnswer();
     // If we have a parent window, send message to it with the answer. This
     // allows the crowdsourcing interface to be embedded in an iFrame and
@@ -152,7 +158,7 @@ export class BaseJobComponent<T> implements OnInit {
     }
 
     this.crowdSourceApiService.postAnswer(
-        this.clientJobKey, this.questionId, this.userNonce, answer)
+        this.clientJobKey, this.questionId, this.userNonce + ':' + this.local_sent_count, answer)
       .subscribe(
         (data: {}) => {
           this.local_sent_count += 1;
@@ -173,9 +179,25 @@ export class BaseJobComponent<T> implements OnInit {
       return;
     }
     console.log(data);
-    const randomItemIndex = getRandomInt(0, data.length);
 
-    this.selectedWork = data[randomItemIndex];
+    let lowestCountedQuestions = [];
+    let lowestCountedQuestionCount = answeredQuestionCounts[data[0].question_id];
+
+    for (const d of data) {
+      if (!(d.question_id in answeredQuestionCounts)) {
+        answeredQuestionCounts[d.question_id] = 0;
+      }
+
+      if (answeredQuestionCounts[d.question_id] < lowestCountedQuestionCount) {
+        lowestCountedQuestionCount = answeredQuestionCounts[d.question_id];
+        lowestCountedQuestions = [d];
+      } else if (answeredQuestionCounts[d.question_id] === lowestCountedQuestionCount) {
+        lowestCountedQuestions.push(d);
+      }
+    }
+
+    const randomItemIndex = getRandomInt(0, lowestCountedQuestions.length);
+    this.selectedWork = lowestCountedQuestions[randomItemIndex];
     this.questionId = this.selectedWork.question_id;
 
     if (!this.clientJobKey) {
