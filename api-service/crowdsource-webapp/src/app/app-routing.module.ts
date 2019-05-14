@@ -13,14 +13,14 @@ const routes: Routes = [
   {path: 'relative_toxicity_job/:clientJobKey', component: RelativeToxicityJobComponent},
   {
     path: 'relative_toxicity_job',
-    redirectTo: 'relative_toxicity_job/wikipedia_relative_rating_pairs_demo_test',
+    redirectTo: 'relative_toxicity_job/wikipedia_relative_rating_pairs_demo1',
     pathMatch: 'full'
   },
   {path: 'relative_toxicity_job/answers/:clientJobKey', component: RelativeToxicityAnswersPageComponent},
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {useHash: true})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
