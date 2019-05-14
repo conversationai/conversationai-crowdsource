@@ -22,6 +22,10 @@ interface JobAndQuestionUrlParams {
   questionId?: string;
 }
 
+interface AnsweredQuestions { [questionId: string]: number; }
+
+const answeredQuestionCounts: AnsweredQuestions = {};
+
 /**
  * Base component to inherit from for building custom job components.
  *
@@ -136,6 +140,12 @@ export class BaseJobComponent<T> implements OnInit {
   }
 
   public sendScoreToApi() {
+
+    if (!answeredQuestionCounts[this.questionId]) {
+      answeredQuestionCounts[this.questionId] = 0;
+    }
+    answeredQuestionCounts[this.questionId] += 1;
+
     const answer = this.buildAnswer();
     // If we have a parent window, send message to it with the answer. This
     // allows the crowdsourcing interface to be embedded in an iFrame and
@@ -169,9 +179,25 @@ export class BaseJobComponent<T> implements OnInit {
       return;
     }
     console.log(data);
-    const randomItemIndex = getRandomInt(0, data.length);
 
-    this.selectedWork = data[randomItemIndex];
+    let lowestCountedQuestions = [];
+    let lowestCountedQuestionCount = answeredQuestionCounts[data[0].question_id];
+
+    for (const d of data) {
+      if (!(d.question_id in answeredQuestionCounts)) {
+        answeredQuestionCounts[d.question_id] = 0;
+      }
+
+      if (answeredQuestionCounts[d.question_id] < lowestCountedQuestionCount) {
+        lowestCountedQuestionCount = answeredQuestionCounts[d.question_id];
+        lowestCountedQuestions = [d];
+      } else if (answeredQuestionCounts[d.question_id] === lowestCountedQuestionCount) {
+        lowestCountedQuestions.push(d);
+      }
+    }
+
+    const randomItemIndex = getRandomInt(0, lowestCountedQuestions.length);
+    this.selectedWork = lowestCountedQuestions[randomItemIndex];
     this.questionId = this.selectedWork.question_id;
 
     if (!this.clientJobKey) {
