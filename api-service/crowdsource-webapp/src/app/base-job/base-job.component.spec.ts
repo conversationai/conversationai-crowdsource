@@ -31,7 +31,6 @@ import { CrowdsourceApiService, CommentQuestion } from '../crowdsource-api.servi
 class MyJobComponent extends BaseJobComponent<CommentQuestion> {
   clientJobKey = 'testJobKey';
   questionId = 'fooQuestion';
-  routerPath = '/my_job';
 }
 
 // Test component wrapper for BaseJobComponent.

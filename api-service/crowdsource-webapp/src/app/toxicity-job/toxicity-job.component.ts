@@ -22,8 +22,6 @@ const NO = 'no';
   styleUrls: ['./toxicity-job.component.css']
 })
 export class ToxicityJobComponent extends BaseJobComponent<CommentQuestion> {
-  @Input() routerPath = '/toxicity_job';
-
   readableAndInEnglish: boolean;
   toxicityAnswer: string;
   obsceneAnswer: string;

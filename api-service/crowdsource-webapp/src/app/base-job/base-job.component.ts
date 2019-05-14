@@ -19,7 +19,6 @@ const YES = 'Yes';
 const NO = 'No';
 
 interface JobAndQuestionUrlParams {
-  clientJobKey: string;
   questionId?: string;
 }
 
@@ -47,7 +46,6 @@ interface JobAndQuestionUrlParams {
 })
 export class BaseJobComponent<T> implements OnInit {
   @Input() clientJobKey: string;
-  @Input() routerPath = '/base_job';
 
   userNonce: string | null;
   errorMessages: string[] = [];
@@ -72,7 +70,7 @@ export class BaseJobComponent<T> implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private crowdSourceApiService: CrowdsourceApiService) { }
+    private crowdSourceApiService: CrowdsourceApiService) {}
 
   ngOnInit(): void {
     // Determine if page should render in embedded mode
@@ -128,15 +126,13 @@ export class BaseJobComponent<T> implements OnInit {
     if (!this.clientJobKey) {
       return;
     }
-    const urlParams: JobAndQuestionUrlParams = {
-      clientJobKey: this.clientJobKey,
-    };
+    const urlParams: JobAndQuestionUrlParams = {};
 
     if (this.questionId) {
       urlParams.questionId = this.questionId;
     }
 
-    this.router.navigate([this.routerPath, urlParams]);
+    this.router.navigate([`./`, urlParams], { relativeTo: this.route });
   }
 
   public sendScoreToApi() {
