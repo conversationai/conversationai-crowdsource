@@ -246,7 +246,6 @@ export class CrowdsourceDB {
     }
     let questionRows =
         results[0].map(row => db_types.parseOutputRow<QuestionToAnswer>(row));
-    console.log(questionRows);
     return questionRows;
   }
 
