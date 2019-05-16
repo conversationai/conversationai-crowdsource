@@ -178,10 +178,8 @@ export class BaseJobComponent<T> implements OnInit {
       console.error('Data length is 0 in chooseRandomWorkToDo()');
       return;
     }
-    console.log(data);
-
-    let lowestCountedQuestions = [];
-    let lowestCountedQuestionCount = answeredQuestionCounts[data[0].question_id];
+    let lowestCountedQuestions: WorkToDo<T>[] = [];
+    let lowestCountedQuestionCount = answeredQuestionCounts[data[0].question_id] || 0;
 
     for (const d of data) {
       if (!(d.question_id in answeredQuestionCounts)) {
