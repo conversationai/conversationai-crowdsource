@@ -58,9 +58,9 @@ export class CrowdsourceApiService {
     return this.http.get<WorkToDo<T>>(`/client_jobs/${clientJobKey}/questions/${questionId}`);
   }
 
-  getWorkToDo<T>(clientJobKey: string): Observable<WorkToDo<T>[]> {
+  getWorkToDo<T>(clientJobKey: string, userNonce: string): Observable<WorkToDo<T>[]> {
       // If specified job, get next questions for that job.
-      return this.http.get<WorkToDo<T>[]>(`/client_jobs/${clientJobKey}/next10_unanswered_questions`);
+      return this.http.get<WorkToDo<T>[]>(`/client_jobs/${clientJobKey}/${userNonce}/next10_unanswered_questions`);
   }
 
   getJobQuality(clientJobKey: string): Observable<JobQualitySummary> {

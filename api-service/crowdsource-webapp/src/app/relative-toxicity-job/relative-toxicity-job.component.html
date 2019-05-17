@@ -10,8 +10,11 @@
     <button mat-icon-button color="warn" (click)="clearError()"><mat-icon>close</mat-icon></button>
   </div>
 
-  <div *ngIf="!question">
+  <div *ngIf="!question && !done">
     Loading...
+  </div>
+  <div *ngIf="done">
+    Done!
   </div>
 
   <div *ngIf="question">
