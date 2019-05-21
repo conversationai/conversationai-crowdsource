@@ -57,13 +57,13 @@ Assumes basic development tools like git, xcode (if on Mac), etc are installed.
 ## Setup the cloud project which is going to be used
 
 Create a cloud project, setup
-[spanner](https://pantheon.corp.google.com/spanner/instances/crowdsource/databases)
+[spanner](https://console.developers.google.com/spanner/instances/crowdsource/databases)
 as per the instructions in the `api-server` directory.
 
 To run the database creation script you'll also need to have setup a service
 account key with `Compute Engine default service account` credentials, which
 you can do from:
-https://pantheon.corp.google.com/apis/credentials/serviceaccountkey
+https://console.developers.google.com/apis/credentials/serviceaccountkey
 See the top of the file `api-server/src/setup/create_db.ts` for more details.
 
 
