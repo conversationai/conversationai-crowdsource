@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import math
 from crowd_data_aggregation_functions import *
+from data_input_output_functions import *
 
 class CrowdsourceAggregator:
     '''
@@ -49,11 +50,7 @@ class CrowdsourceAggregator:
             aggregated_df[col] = aggregated_df[col].apply(lambda x: round(x,2))
 
         return aggregated_df
-    
-    def write_csv(self, dframe, cols, csv_path):
-        dframe.to_csv(csv_path, columns = cols, index = False)
-        print('CSV written: ', csv_path)
-        
+            
 if __name__=='__main__':
     ca = CrowdsourceAggregator('../CF_output/constructiveness/batch8/batch8_f1285429.csv')
     print('The number of annotators: ', ca.get_nannotators())
